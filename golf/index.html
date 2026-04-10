@@ -416,16 +416,69 @@ function buildLights() {
 }
 
 // ════════════════════════════════════════════════════════════════════
+//  PROCEDURAL TEXTURES
+// ════════════════════════════════════════════════════════════════════
+let groundNoiseTex = null;
+function getGroundNoiseTex() {
+    if (groundNoiseTex) return groundNoiseTex;
+    const canvas = document.createElement('canvas');
+    canvas.width = 512; canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    const id = ctx.createImageData(512, 512);
+    for(let i=0; i<id.data.length; i+=4) {
+        let v = 210 + Math.random() * 45; // Subtle gray-to-white grain
+        id.data[i] = id.data[i+1] = id.data[i+2] = v;
+        id.data[i+3] = 255;
+    }
+    ctx.putImageData(id, 0, 0);
+    groundNoiseTex = new THREE.CanvasTexture(canvas);
+    groundNoiseTex.wrapS = groundNoiseTex.wrapT = THREE.RepeatWrapping;
+    groundNoiseTex.repeat.set(16, 16);
+    return groundNoiseTex;
+}
+
+let ballNMap = null;
+function getBallNormalMap() {
+    if (ballNMap) return ballNMap;
+    const canvas = document.createElement('canvas');
+    canvas.width = 512; canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#8080ff'; // flat normal
+    ctx.fillRect(0,0,512,512);
+    const rows = 32, cols = 64;
+    for (let r=0; r<rows; r++) {
+        for (let c=0; c<cols; c++) {
+            let cx = (c + (r%2)*0.5) * (512/cols);
+            let cy = r * (512/rows);
+            let grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 512/cols*0.45);
+            grad.addColorStop(0, '#5050ff'); // indented normal
+            grad.addColorStop(1, '#8080ff'); 
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 512/cols*0.45, 0, Math.PI*2);
+            ctx.fill();
+        }
+    }
+    ballNMap = new THREE.CanvasTexture(canvas);
+    ballNMap.wrapS = ballNMap.wrapT = THREE.RepeatWrapping;
+    ballNMap.repeat.set(4, 2);
+    return ballNMap;
+}
+
+// ════════════════════════════════════════════════════════════════════
 //  COURSE BUILDING
 // ════════════════════════════════════════════════════════════════════
 function buildCourse() {
     const cd   = currentCourse;
     const GW   = cd.GW, GD = cd.GD;
-    const rMat = new THREE.MeshStandardMaterial({ color: cd.groundColor,   roughness: 1.0 });
-    const wMat = new THREE.MeshStandardMaterial({ color: cd.wallColor,     roughness: 0.85 });
-    const oMat = new THREE.MeshStandardMaterial({ color: cd.obstacleColor, roughness: 0.8 });
-    const fwMat= new THREE.MeshStandardMaterial({ color: cd.fairwayColor,  roughness: 0.88 });
-    const grMat= new THREE.MeshStandardMaterial({ color: cd.greenColor,    roughness: 0.7 });
+    
+    // Add real textures and more varied PBR parameters
+    const noise = getGroundNoiseTex();
+    const rMat = new THREE.MeshStandardMaterial({ color: cd.groundColor,   roughness: 0.9, map: noise });
+    const wMat = new THREE.MeshStandardMaterial({ color: cd.wallColor,     roughness: 0.8, map: noise });
+    const oMat = new THREE.MeshStandardMaterial({ color: cd.obstacleColor, roughness: 0.75, map: noise });
+    const fwMat= new THREE.MeshStandardMaterial({ color: cd.fairwayColor,  roughness: 0.85, map: noise });
+    const grMat= new THREE.MeshStandardMaterial({ color: cd.greenColor,    roughness: 0.65, map: noise });
 
     // Ground split around holes
     buildSplitGround(GW, GD, cd.holes, rMat);
@@ -442,8 +495,29 @@ function buildCourse() {
         scene.add(pg);
     });
 
+    // Safety check: is position too close to any hole or spawn?
+    // Using box-vs-circle intersection logic for large obstacles
+    const isNearHoleOrSpawn = (x, z, sizeX = 0, sizeZ = 0, radius = 9.0) => {
+        const hX = sizeX / 2;
+        const hZ = sizeZ / 2;
+        const checkOverlap = (cx, cz) => {
+            const nearestX = Math.max(x - hX, Math.min(cx, x + hX));
+            const nearestZ = Math.max(z - hZ, Math.min(cz, z + hZ));
+            const dx = cx - nearestX;
+            const dz = cz - nearestZ;
+            return (dx*dx + dz*dz) < (radius * radius);
+        };
+
+        for (const h of cd.holes) {
+            if (checkOverlap(h.holeX, h.holeZ)) return true;
+            if (checkOverlap(h.spawn[0], h.spawn[2])) return true;
+        }
+        return false;
+    };
+
     // Ramps
     cd.ramps.forEach(([sz, pos, rx, rz]) => {
+        if (isNearHoleOrSpawn(pos[0], pos[2], sz[0], sz[2], 8.0)) return;
         const m = new THREE.Mesh(new THREE.BoxGeometry(...sz), rMat);
         m.position.set(...pos); m.rotation.set(rx, 0, rz);
         m.receiveShadow = true; scene.add(m);
@@ -458,14 +532,17 @@ function buildCourse() {
     wallVis([GW+6, wallH, 3], [0, wallH/2,  GD/2+1.5], wMat, WP);
 
     // Obstacles
-    cd.obstacles.forEach(([sz, pos]) => obsVis(sz, pos, oMat, OP));
+    cd.obstacles.forEach(([sz, pos]) => {
+        if (isNearHoleOrSpawn(pos[0], pos[2], sz[0], sz[2], 9.0)) return;
+        obsVis(sz, pos, oMat, OP);
+    });
 
     // Hole cups + flags
     cd.holes.forEach((h, i) => buildHoleCup(h.holeX, h.holeZ, i + 1));
 
     // Trees / Rocks
-    if (cd.treePositions && cd.treePositions.length) buildTrees(cd.treePositions);
-    if (cd.rockPositions && cd.rockPositions.length) buildRocks(cd.rockPositions, oMat);
+    if (cd.treePositions && cd.treePositions.length) buildTrees(cd.treePositions, isNearHoleOrSpawn);
+    if (cd.rockPositions && cd.rockPositions.length) buildRocks(cd.rockPositions, oMat, isNearHoleOrSpawn);
 
     // Spawn marker
     const sp = cd.holes[currentHoleIdx].spawn;
@@ -479,39 +556,50 @@ function buildCourse() {
 // Build flat ground leaving cylindrical gaps at each hole
 function buildSplitGround(GW, GD, holes, mat) {
     const thick = 1, halfW = GW/2, halfD = GD/2;
-    const margin = HOLE_R + 0.45;  // tight enough so ball radius(0.5) can't slip past cup wall
+    const margin = HOLE_R + 0.45;
 
-    // Sort holes by Z (ascending)
-    const hs = [...holes].sort((a, b) => a.holeZ - b.holeZ);
-    let zCur = -halfD;
-
-    hs.forEach(h => {
-        const zLo = h.holeZ - margin, zHi = h.holeZ + margin;
-        const xLo = h.holeX - margin, xHi = h.holeX + margin;
-
-        // Strip above this hole
-        if (zLo > zCur) {
-            const depth = zLo - zCur, pos = [0, -0.5, zCur + depth/2];
-            addBox([GW, thick, depth], pos, mat);
-        }
-
-        // Slice at hole Z-level: left piece, right piece
-        const slD = zHi - zLo;
-        if (xLo > -halfW) {
-            const wl = xLo + halfW, pos = [-halfW + wl/2, -0.5, h.holeZ];
-            addBox([wl, thick, slD], pos, mat);
-        }
-        if (xHi < halfW) {
-            const wr = halfW - xHi, pos = [halfW - wr/2, -0.5, h.holeZ];
-            addBox([wr, thick, slD], pos, mat);
-        }
-        zCur = zHi;
+    // 1. Determine all unique Z-boundary points
+    let zPoints = [-halfD, halfD];
+    holes.forEach(h => {
+        zPoints.push(h.holeZ - margin);
+        zPoints.push(h.holeZ + margin);
     });
+    // Filter out of bounds and sort unique points
+    zPoints = [...new Set(zPoints.filter(z => z >= -halfD && z <= halfD))].sort((a,b) => a - b);
 
-    // Final strip
-    if (zCur < halfD) {
-        const depth = halfD - zCur, pos = [0, -0.5, zCur + depth/2];
-        addBox([GW, thick, depth], pos, mat);
+    // 2. Iterate through z-intervals (bands)
+    for (let i = 0; i < zPoints.length - 1; i++) {
+        const zStart = zPoints[i], zEnd = zPoints[i+1];
+        const zMid = (zStart + zEnd) / 2;
+        const depth = zEnd - zStart;
+        if (depth < 0.01) continue;
+
+        // Find holes that exist in this z-band
+        const hs = holes.filter(h => (h.holeZ - margin < zMid) && (h.holeZ + margin > zMid));
+
+        if (hs.length === 0) {
+            // Solid strip
+            addBox([GW, thick, depth], [0, -0.5, zMid], mat);
+        } else {
+            // Slice with one or more holes: sort by X
+            const sorted = [...hs].sort((a, b) => a.holeX - b.holeX);
+            let xCur = -halfW;
+
+            sorted.forEach(h => {
+                const xLo = h.holeX - margin, xHi = h.holeX + margin;
+                if (xLo > xCur) {
+                    const w = xLo - xCur, pos = [xCur + w/2, -0.5, zMid];
+                    addBox([w, thick, depth], pos, mat);
+                }
+                xCur = xHi;
+            });
+
+            // Final piece to right boundary
+            if (xCur < halfW) {
+                const w = halfW - xCur, pos = [xCur + w/2, -0.5, zMid];
+                addBox([w, thick, depth], pos, mat);
+            }
+        }
     }
 }
 
@@ -571,27 +659,53 @@ function buildHoleCup(hx, hz, num) {
 }
 
 // ════════════════════════════════════════════════════════════════════
-//  TREES + ROCKS
+//  TREES + ROCKS (Optimized via InstancedMesh)
 // ════════════════════════════════════════════════════════════════════
-function buildTrees(positions) {
+function buildTrees(positions, safetyCheck) {
+    const valid = [];
+    positions.forEach(([x, z]) => {
+        if (!safetyCheck || !safetyCheck(x, z, 3, 3, 9.0)) valid.push([x, z]);
+    });
+    if (!valid.length) return;
+
     const trM = new THREE.MeshStandardMaterial({ color:0x5c3916, roughness:0.92 });
     const lfM = new THREE.MeshStandardMaterial({ color:0x1a6018, roughness:0.88 });
-    positions.forEach(([x, z]) => {
-        const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.5, 4.5, 8), trM);
-        tr.position.set(x, 2.25, z); tr.castShadow = true; scene.add(tr);
-        const lf = new THREE.Mesh(new THREE.ConeGeometry(3.2, 8, 8), lfM);
-        lf.position.set(x, 9.5, z); lf.castShadow = true; scene.add(lf);
+    const iTr = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.35, 0.5, 4.5, 6), trM, valid.length);
+    const iLf = new THREE.InstancedMesh(new THREE.ConeGeometry(3.2, 8, 7), lfM, valid.length);
+    iTr.castShadow = iLf.castShadow = true;
+
+    const dummy = new THREE.Object3D();
+    valid.forEach(([x, z], i) => {
+        dummy.position.set(x, 2.25, z); dummy.updateMatrix();
+        iTr.setMatrixAt(i, dummy.matrix);
+        dummy.position.set(x, 9.5, z); dummy.updateMatrix();
+        iLf.setMatrixAt(i, dummy.matrix);
     });
+    scene.add(iTr); scene.add(iLf);
 }
-function buildRocks(positions, mat) {
+
+function buildRocks(positions, mat, safetyCheck) {
+    const valid = [];
     positions.forEach(([x, z]) => {
+        if (!safetyCheck || !safetyCheck(x, z, 5, 5, 9.0)) valid.push([x, z]);
+    });
+    if (!valid.length) return;
+
+    const iRoc = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 7, 5), mat, valid.length);
+    iRoc.castShadow = true;
+
+    const dummy = new THREE.Object3D();
+    valid.forEach(([x, z], i) => {
         const r = 2.5 + Math.random() * 2.5;
-        const rock = new THREE.Mesh(new THREE.SphereGeometry(r, 7, 5), mat);
-        rock.scale.y = 0.55 + Math.random() * 0.3;
-        rock.position.set(x, r * rock.scale.y * 0.4, z);
-        rock.castShadow = true; scene.add(rock);
+        const sy = 0.55 + Math.random() * 0.3;
+        dummy.position.set(x, r * sy * 0.4, z);
+        dummy.scale.set(r, r * sy, r);
+        dummy.rotation.set(Math.random(), Math.random(), Math.random());
+        dummy.updateMatrix();
+        iRoc.setMatrixAt(i, dummy.matrix);
         world.add({ type:'box', size:[r*1.6, r*1.2, r*1.6], pos:[x, r*0.5, z], move:false, density:1, friction:0.7, restitution:0.1 });
     });
+    scene.add(iRoc);
 }
 
 // ════════════════════════════════════════════════════════════════════
@@ -599,7 +713,10 @@ function buildRocks(positions, mat) {
 // ════════════════════════════════════════════════════════════════════
 function buildBall() {
     ballMesh = new THREE.Mesh(new THREE.SphereGeometry(BALL_R, 32, 32),
-        new THREE.MeshStandardMaterial({ color:0xfafafa, roughness:0.1, metalness:0.05 }));
+        new THREE.MeshStandardMaterial({ 
+            color:0xfafafa, roughness:0.4, metalness:0.1,
+            normalMap: getBallNormalMap() 
+        }));
     ballMesh.castShadow = true; scene.add(ballMesh);
 
     const sp = currentCourse.holes[currentHoleIdx].spawn;
