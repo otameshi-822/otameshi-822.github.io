@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>3D Mini Golf</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html {
+            width: 100%; height: 100%; overflow: hidden;
+            font-family: 'Outfit', sans-serif; background: #0a1628;
+        }
+
+        /* ══ HOME SCREEN ══════════════════════════════════════════════════ */
+        #home-screen {
+            position: absolute; inset: 0; z-index: 100;
+            background: linear-gradient(135deg, #071020 0%, #0f2240 45%, #071828 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow-y: auto; padding: 40px 20px;
+        }
+        .home-logo {
+            font-size: 5rem; font-weight: 900; letter-spacing: -3px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 6px; text-align: center;
+        }
+        .home-sub {
+            color: rgba(255,255,255,0.4); font-size: 0.9rem; font-weight: 600;
+            letter-spacing: 5px; text-transform: uppercase;
+            margin-bottom: 60px;
+        }
+        .course-grid { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
+
+        .course-card {
+            width: 310px; border-radius: 22px; overflow: hidden; cursor: pointer;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.10);
+            backdrop-filter: blur(20px);
+            transition: transform .22s, box-shadow .22s, border-color .22s;
+        }
+        .course-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 24px 70px rgba(0,0,0,0.7);
+            border-color: rgba(255,215,0,0.35);
+        }
+        .course-thumb {
+            height: 175px; display: flex; align-items: center; justify-content: center;
+            font-size: 5.5rem; position: relative; overflow: hidden;
+        }
+        .thumb-green  { background: linear-gradient(155deg,#1a5c25,#3a8c40 55%,#1a3a5e); }
+        .thumb-desert { background: linear-gradient(155deg,#7a4010,#c4783a 55%,#8a5820); }
+        .course-thumb::after {
+            content:''; position:absolute; inset:0;
+            background: linear-gradient(to top, rgba(0,0,0,0.55), transparent 60%);
+        }
+        .course-info { padding: 20px 24px 22px; }
+        .c-badge {
+            display: inline-block; font-size: 0.65rem; font-weight: 700; letter-spacing: 2px;
+            padding: 3px 10px; border-radius: 999px; margin-bottom: 10px;
+            background: rgba(255,215,0,0.12); border: 1px solid rgba(255,215,0,0.28);
+            color: #FFD700; text-transform: uppercase;
+        }
+        .c-name { color: #fff; font-size: 1.35rem; font-weight: 900; margin-bottom: 6px; }
+        .c-desc { color: rgba(255,255,255,0.45); font-size: 0.82rem; line-height: 1.55; margin-bottom: 14px; }
+        .c-holes { color: rgba(255,255,255,0.3); font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+        .play-btn {
+            display: block; width: 100%; padding: 13px;
+            background: linear-gradient(135deg, #00c853, #1b5e20);
+            border: none; border-radius: 11px; margin-top: 14px;
+            color: #fff; font-size: 0.98rem; font-weight: 700; font-family: inherit;
+            cursor: pointer; transition: opacity .15s;
+        }
+        .play-btn:hover { opacity: 0.86; }
+
+        /* ══ GAME SCREEN (HUD layer) ══════════════════════════════════════ */
+        #game-screen {
+            position: absolute; inset: 0; display: none; pointer-events: none; z-index: 10;
+        }
+        /* Three.js canvas goes behind — injected by JS */
+
+        /* HUD top-left */
+        #hud { position: absolute; top: 20px; left: 20px; display: flex; gap: 12px; }
+        .glass {
+            background: rgba(20,30,50,0.72); backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.16); border-radius: 18px;
+            padding: 12px 22px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); color: #fff;
+        }
+        .lbl { font-size: 0.62rem; font-weight: 700; letter-spacing: 3px; color: #FFD700; text-transform: uppercase; }
+        .val { font-size: 2.4rem; font-weight: 900; line-height: 1.0; }
+
+        /* Hole indicator — top center */
+        #hole-bar {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(10,20,40,0.75); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,215,0,0.22); border-radius: 999px;
+            padding: 9px 22px; color: #FFD700; font-size: 0.84rem; font-weight: 700;
+            letter-spacing: 2px; white-space: nowrap;
+        }
+
+        /* State pill — top right */
+        #aim-info { position: absolute; top: 20px; right: 20px; }
+        .pill {
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 999px; padding: 10px 20px; color: #fff;
+            font-size: 0.82rem; font-weight: 600; display: flex; align-items: center; gap: 10px;
+        }
+        .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; transition: background .3s; }
+
+        /* Power gauge — bottom left */
+        #power-wrap {
+            position: absolute; bottom: 50px; left: 30px;
+            display: none; flex-direction: column; align-items: center; gap: 8px;
+        }
+        #plbl { color: #fff; font-size: 0.64rem; font-weight: 700; letter-spacing: 2px; text-shadow: 0 1px 5px rgba(0,0,0,0.8); }
+        #pbar {
+            width: 38px; height: 200px;
+            background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.18);
+            border-radius: 19px; overflow: hidden; position: relative;
+        }
+        #pfill {
+            position: absolute; bottom: 0; width: 100%;
+            background: linear-gradient(to top, #00e676, #ffea00, #ff1744);
+            transition: height .05s ease-out; height: 0%;
+        }
+
+        /* Zoom tip — bottom right */
+        #zoom-tip {
+            position: absolute; bottom: 20px; right: 20px;
+            color: rgba(255,255,255,0.28); font-size: 0.72rem; font-weight: 600; letter-spacing:1px;
+        }
+
+        /* Overlay */
+        #overlay {
+            position: absolute; inset: 0; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.65); backdrop-filter: blur(7px); z-index: 30;
+            pointer-events: auto;
+        }
+        .msg-box {
+            background: rgba(8,16,36,0.94); border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 26px; padding: 52px 68px; text-align: center;
+            box-shadow: 0 24px 90px rgba(0,0,0,0.8); max-width: 480px;
+        }
+        .mt { font-size: 3.4rem; font-weight: 900; color: #FFD700; margin-bottom: 8px; }
+        .ms { color: rgba(255,255,255,0.55); font-size: 1rem; margin-bottom: 28px; line-height: 1.6; }
+        .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            border: none; border-radius: 50px; padding: 14px 40px;
+            color: #fff; font-size: 1.1rem; font-weight: 700; font-family: inherit;
+            cursor: pointer; transition: transform .15s, box-shadow .15s;
+            pointer-events: auto;
+        }
+        .btn-green  { background: linear-gradient(135deg,#00c853,#1b5e20); box-shadow: 0 4px 20px rgba(0,200,83,0.4); }
+        .btn-blue   { background: linear-gradient(135deg,#1565c0,#0d47a1); box-shadow: 0 4px 20px rgba(21,101,192,0.4); }
+        .btn:hover  { transform: translateY(-3px); }
+
+        /* Crosshair */
+        #xhair {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%,-50%); pointer-events: none;
+            width: 16px; height: 16px; opacity: 0.75;
+        }
+        #xhair::before, #xhair::after {
+            content: ''; position: absolute;
+            background: rgba(255,255,255,0.9); border-radius: 1px;
+        }
+        #xhair::before { width: 2px; height: 100%; left: 50%; transform: translateX(-50%); }
+        #xhair::after  { height: 2px; width: 100%; top: 50%; transform: translateY(-50%); }
+    </style>
+</head>
+<body>
+
+<!-- ═══ HOME SCREEN ═══════════════════════════════════════════════════════ -->
+<div id="home-screen">
+    <div class="home-logo">⛳ MINI GOLF 3D</div>
+    <div class="home-sub">コースを選んでください</div>
+    <div class="course-grid" id="course-grid"><!-- Filled by JS --></div>
+</div>
+
+<!-- ═══ GAME SCREEN (HUD layer, no canvas) ════════════════════════════════ -->
+<div id="game-screen">
+    <!-- HUD -->
+    <div id="hud">
+        <div class="glass">
+            <div class="lbl">Hole</div>
+            <div class="val" id="h-hole">1</div>
+        </div>
+        <div class="glass">
+            <div class="lbl">Strokes</div>
+            <div class="val" id="h-strokes">0</div>
+        </div>
+        <div class="glass">
+            <div class="lbl">Par</div>
+            <div class="val" id="h-par">-</div>
+        </div>
+    </div>
+    <div id="hole-bar">HOLE 1</div>
+
+    <div id="aim-info">
+        <div class="pill">
+            <div class="dot" id="sdot" style="background:#ffdd44"></div>
+            <span id="stxt">クリックしてゲーム開始</span>
+        </div>
+    </div>
+
+    <div id="power-wrap">
+        <div id="plbl">POWER</div>
+        <div id="pbar"><div id="pfill"></div></div>
+    </div>
+
+    <div id="zoom-tip">🖱 Wheel: ズーム</div>
+
+    <!-- Hole-in overlay -->
+    <div id="overlay">
+        <div class="msg-box">
+            <div class="mt" id="ov-title">⛳ HOLE IN!</div>
+            <div class="ms" id="ov-sub"></div>
+            <div class="btn-row">
+                <button class="btn btn-green" id="btn-next">NEXT HOLE ›</button>
+                <button class="btn btn-blue"  onclick="goHome()">🏠 HOME</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="xhair"></div>
+</div>
+
+<!-- Three.js + OimoJS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/oimo/1.0.9/oimo.min.js"></script>
+
+<!-- Course data files -->
+<script src="course/course1.js"></script>
+<script src="course/course2.js"></script>
+<script src="course/course3.js"></script>
+<script src="course/course4.js"></script>
+<script src="course/course5.js"></script>
+
+<script>
+'use strict';
+// ════════════════════════════════════════════════════════════════════
+//  HOME SCREEN — build course cards from GOLF_COURSES data
+// ════════════════════════════════════════════════════════════════════
+const COURSES = window.GOLF_COURSES || [];
+(function buildHomeCards() {
+    const grid = document.getElementById('course-grid');
+    COURSES.forEach(c => {
+        const thumbCls = c.theme === 'desert' ? 'thumb-desert' : 'thumb-green';
+        const div = document.createElement('div');
+        div.className = 'course-card';
+        div.innerHTML = `
+            <div class="course-thumb ${thumbCls}">${c.emoji}</div>
+            <div class="course-info">
+                <div class="c-badge">${c.badge}</div>
+                <div class="c-name">${c.name}</div>
+                <div class="c-desc">${c.desc.replace(/\n/g,'<br>')}</div>
+                <div class="c-holes">⛳ ${c.holes.length} HOLES</div>
+                <button class="play-btn">PLAY →</button>
+            </div>`;
+        div.querySelector('.play-btn').addEventListener('click', e => {
+            e.stopPropagation(); selectCourse(c.id);
+        });
+        div.addEventListener('click', () => selectCourse(c.id));
+        grid.appendChild(div);
+    });
+})();
+
+// ════════════════════════════════════════════════════════════════════
+//  GAME CONSTANTS
+// ════════════════════════════════════════════════════════════════════
+const BALL_R  = 0.5;
+const BALL_D  = BALL_R * 2;
+const HOLE_R  = 0.92;
+const CUP_DEP = 1.9;
+const POWER_M = 35.0;
+
+// ════════════════════════════════════════════════════════════════════
+//  MUTABLE GAME STATE
+// ════════════════════════════════════════════════════════════════════
+let scene, camera, renderer, world;
+let ballMesh, ballBody, arrowMesh, putterGrp;
+let animId = null;
+
+let gameState = 'IDLE';   // IDLE | LOCKED | MOVING | HOLE_IN
+let strokes = 0, totalStrokes = 0, stopTmr = 0;
+
+let currentCourse  = null;
+let currentHoleIdx = 0;
+
+let camDist  = 10.0;
+let camYaw   = 0, camPitch = 0.34;
+let lockYaw  = 0, lockPitch = 0.34;
+
+let swing = 0, prevSwing = 0, swungBack = false, swingRaw = 0;
+let cameraLockFrames = 0;
+const velH    = new Array(6).fill(0);
+let   velIdx  = 0;
+
+const aimDir = new THREE.Vector3(0, 0, -1);
+const Q_FLAT = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), -Math.PI/2);
+const Q_TURN = new THREE.Quaternion();
+const V_UP   = new THREE.Vector3(0,1,0);
+
+let GP = { friction: 0.55, restitution: 0.20 };  // ground physics props
+let WP = { friction: 0.28, restitution: 0.45 };  // wall physics props
+let OP = { friction: 0.40, restitution: 0.38 };  // obstacle physics props
+
+// ════════════════════════════════════════════════════════════════════
+//  COURSE SELECTION
+// ════════════════════════════════════════════════════════════════════
+function selectCourse(id) {
+    currentCourse  = COURSES.find(c => c.id === id);
+    currentHoleIdx = 0;
+    totalStrokes   = 0;
+    strokes        = 0;
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('game-screen').style.display = 'block';
+    initGame();
+}
+
+function goHome() {
+    cleanupGame();
+    document.getElementById('overlay').style.display    = 'none';
+    document.getElementById('game-screen').style.display = 'none';
+    document.getElementById('home-screen').style.display = 'flex';
+}
+window.goHome = goHome;
+
+// ════════════════════════════════════════════════════════════════════
+//  GAME INIT / CLEANUP
+// ════════════════════════════════════════════════════════════════════
+function cleanupGame() {
+    if (animId) { cancelAnimationFrame(animId); animId = null; }
+    if (document.pointerLockElement) document.exitPointerLock();
+    if (renderer) { renderer.domElement.remove(); renderer.dispose(); }
+    window.removeEventListener('resize',           onResize);
+    document.removeEventListener('mousemove',      onMouseMove);
+    window.removeEventListener('wheel',            onWheel);
+    document.removeEventListener('pointerlockchange', onPLC);
+    scene = camera = renderer = world = ballMesh = ballBody = arrowMesh = putterGrp = null;
+    gameState = 'IDLE';
+}
+
+function initGame() {
+    cleanupGame();   // remove old listeners / canvas if reiniting
+    strokes  = 0;
+
+    // --- Three.js scene ---
+    const cd = currentCourse;
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(cd.skyColor);
+    scene.fog = new THREE.FogExp2(cd.fogColor, 0.003);
+
+    camera   = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
+
+    // Canvas behind HUD
+    const cvs = renderer.domElement;
+    cvs.style.cssText = 'position:absolute;inset:0;z-index:0;';
+    document.body.insertBefore(cvs, document.getElementById('game-screen'));
+
+    // --- Physics ---
+    const grav = cd.gravity || [0, -14, 0];
+    world = new OIMO.World({ timestep:1/60, iterations:14, broadphase:2, worldscale:1, gravity:grav });
+    
+    GP.friction = cd.groundFriction ?? 0.55;
+    GP.restitution = cd.groundRestitution ?? 0.20;
+
+    buildLights();
+    buildCourse();
+    buildBall();
+    buildArrow();
+    buildPutter();
+    updateHUD();
+
+    // Events
+    window.addEventListener('resize',              onResize);
+    document.addEventListener('mousemove',         onMouseMove);
+    renderer.domElement.addEventListener('click',  onClick);
+    window.addEventListener('wheel',               onWheel);
+    document.addEventListener('pointerlockchange', onPLC);
+
+    // Initial state reset to prevent carryover offsets
+    camYaw = 0; camPitch = 0.34;
+    lockYaw = 0; lockPitch = 0.34;
+
+    // Force layout update after UI has settled
+    setTimeout(onResize, 100);
+
+    setUI('yellow', 'クリックしてゲーム開始');
+    animate();
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  LIGHTS
+// ════════════════════════════════════════════════════════════════════
+function buildLights() {
+    scene.add(new THREE.AmbientLight(0xc4dcf0, 0.75));
+
+    const sun = new THREE.DirectionalLight(0xfff2d0, 1.3);
+    sun.position.set(150, 300, 120);
+    sun.castShadow = true;
+    Object.assign(sun.shadow.camera, { left:-220, right:220, top:220, bottom:-220, near:1, far:900 });
+    sun.shadow.mapSize.set(2048, 2048);
+    scene.add(sun);
+
+    const subSun = new THREE.DirectionalLight(0x7088cc, 0.28);
+    subSun.position.set(-100, 70, -160);
+    scene.add(subSun);
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  COURSE BUILDING
+// ════════════════════════════════════════════════════════════════════
+function buildCourse() {
+    const cd   = currentCourse;
+    const GW   = cd.GW, GD = cd.GD;
+    const rMat = new THREE.MeshStandardMaterial({ color: cd.groundColor,   roughness: 1.0 });
+    const wMat = new THREE.MeshStandardMaterial({ color: cd.wallColor,     roughness: 0.85 });
+    const oMat = new THREE.MeshStandardMaterial({ color: cd.obstacleColor, roughness: 0.8 });
+    const fwMat= new THREE.MeshStandardMaterial({ color: cd.fairwayColor,  roughness: 0.88 });
+    const grMat= new THREE.MeshStandardMaterial({ color: cd.greenColor,    roughness: 0.7 });
+
+    // Ground split around holes
+    buildSplitGround(GW, GD, cd.holes, rMat);
+
+    // Fairway strip
+    const fw = new THREE.Mesh(new THREE.PlaneGeometry(18, GD * 0.88), fwMat);
+    fw.rotation.x = -Math.PI/2; fw.position.y = 0.01; scene.add(fw);
+
+    // Greens around each hole (with cutout for cup)
+    cd.holes.forEach(h => {
+        const pg = new THREE.Mesh(new THREE.RingGeometry(HOLE_R, 7, 36), grMat);
+        pg.rotation.x = -Math.PI/2;
+        pg.position.set(h.holeX, 0.015, h.holeZ);
+        scene.add(pg);
+    });
+
+    // Ramps
+    cd.ramps.forEach(([sz, pos, rx, rz]) => {
+        const m = new THREE.Mesh(new THREE.BoxGeometry(...sz), rMat);
+        m.position.set(...pos); m.rotation.set(rx, 0, rz);
+        m.receiveShadow = true; scene.add(m);
+        world.add({ type:'box', size:sz, pos, rot:[rx*180/Math.PI, 0, rz*180/Math.PI], move:false, density:1, ...GP });
+    });
+
+    // Boundary walls
+    const wallH = 6;
+    wallVis([3, wallH, GD], [-GW/2-1.5, wallH/2, 0], wMat, WP);
+    wallVis([3, wallH, GD], [ GW/2+1.5, wallH/2, 0], wMat, WP);
+    wallVis([GW+6, wallH, 3], [0, wallH/2, -GD/2-1.5], wMat, WP);
+    wallVis([GW+6, wallH, 3], [0, wallH/2,  GD/2+1.5], wMat, WP);
+
+    // Obstacles
+    cd.obstacles.forEach(([sz, pos]) => obsVis(sz, pos, oMat, OP));
+
+    // Hole cups + flags
+    cd.holes.forEach((h, i) => buildHoleCup(h.holeX, h.holeZ, i + 1));
+
+    // Trees / Rocks
+    if (cd.treePositions && cd.treePositions.length) buildTrees(cd.treePositions);
+    if (cd.rockPositions && cd.rockPositions.length) buildRocks(cd.rockPositions, oMat);
+
+    // Spawn marker
+    const sp = cd.holes[currentHoleIdx].spawn;
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.9, 1.2, 36),
+        new THREE.MeshStandardMaterial({ color:0xffffff, transparent:true, opacity:0.45, side:THREE.DoubleSide }));
+    ring.rotation.x = -Math.PI/2;
+    ring.position.set(sp[0], 0.55, sp[2]);
+    scene.add(ring);
+}
+
+// Build flat ground leaving cylindrical gaps at each hole
+function buildSplitGround(GW, GD, holes, mat) {
+    const thick = 1, halfW = GW/2, halfD = GD/2;
+    const margin = HOLE_R + 0.45;  // tight enough so ball radius(0.5) can't slip past cup wall
+
+    // Sort holes by Z (ascending)
+    const hs = [...holes].sort((a, b) => a.holeZ - b.holeZ);
+    let zCur = -halfD;
+
+    hs.forEach(h => {
+        const zLo = h.holeZ - margin, zHi = h.holeZ + margin;
+        const xLo = h.holeX - margin, xHi = h.holeX + margin;
+
+        // Strip above this hole
+        if (zLo > zCur) {
+            const depth = zLo - zCur, pos = [0, -0.5, zCur + depth/2];
+            addBox([GW, thick, depth], pos, mat);
+        }
+
+        // Slice at hole Z-level: left piece, right piece
+        const slD = zHi - zLo;
+        if (xLo > -halfW) {
+            const wl = xLo + halfW, pos = [-halfW + wl/2, -0.5, h.holeZ];
+            addBox([wl, thick, slD], pos, mat);
+        }
+        if (xHi < halfW) {
+            const wr = halfW - xHi, pos = [halfW - wr/2, -0.5, h.holeZ];
+            addBox([wr, thick, slD], pos, mat);
+        }
+        zCur = zHi;
+    });
+
+    // Final strip
+    if (zCur < halfD) {
+        const depth = halfD - zCur, pos = [0, -0.5, zCur + depth/2];
+        addBox([GW, thick, depth], pos, mat);
+    }
+}
+
+function addBox(sz, pos, mat) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(...sz), mat);
+    m.position.set(...pos); m.receiveShadow = true; scene.add(m);
+    world.add({ type:'box', size:sz, pos, rot:[0,0,0], move:false, density:1, ...GP });
+}
+function wallVis(sz, pos, mat, p) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(...sz), mat);
+    m.position.set(...pos); m.castShadow = m.receiveShadow = true; scene.add(m);
+    world.add({ type:'box', size:sz, pos, rot:[0,0,0], move:false, density:1, ...p });
+}
+function obsVis(sz, pos, mat, p) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(...sz), mat);
+    m.position.set(...pos); m.castShadow = m.receiveShadow = true; scene.add(m);
+    world.add({ type:'box', size:sz, pos, rot:[0,0,0], move:false, density:1, ...p });
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  HOLE CUP + FLAG
+// ════════════════════════════════════════════════════════════════════
+const FLAG_COLORS = [0xff1144, 0x1144ff, 0xffaa00, 0x44ff88];
+function buildHoleCup(hx, hz, num) {
+    const r = HOLE_R, dep = CUP_DEP;
+
+    // Visual pit
+    const cupM = new THREE.Mesh(new THREE.CylinderGeometry(r, r, dep, 36, 1, true),
+        new THREE.MeshStandardMaterial({ color:0x060606, side:THREE.BackSide, roughness:1 }));
+    cupM.position.set(hx, -dep/2, hz); scene.add(cupM);
+
+    const botM = new THREE.Mesh(new THREE.CircleGeometry(r, 36),
+        new THREE.MeshStandardMaterial({ color:0x040404, roughness:1 }));
+    botM.rotation.x = -Math.PI/2; botM.position.set(hx, -dep, hz); scene.add(botM);
+
+    const rimM = new THREE.Mesh(new THREE.RingGeometry(r, r+0.24, 36),
+        new THREE.MeshStandardMaterial({ color:0x1a1a1a, roughness:0.9, side:THREE.DoubleSide }));
+    rimM.rotation.x = -Math.PI/2; rimM.position.set(hx, 0.02, hz); scene.add(rimM);
+
+    // Physics cup — floor + 4 walls whose INNER face is exactly at radius r
+    world.add({ type:'box', size:[r*2, 0.4, r*2], pos:[hx, -dep-0.2, hz], move:false, density:1, friction:0.95, restitution:0 });
+    const wt = 0.35;  // thick enough to fill the gap between cup edge and ground hole
+    // Each wall: center shifted by wt/2 outward so inner face sits at r from hole center
+    world.add({ type:'box', size:[r*2+wt*2, dep, wt], pos:[hx,        -dep/2, hz-r-wt/2], move:false, density:1, friction:0.05, restitution:0 });
+    world.add({ type:'box', size:[r*2+wt*2, dep, wt], pos:[hx,        -dep/2, hz+r+wt/2], move:false, density:1, friction:0.05, restitution:0 });
+    world.add({ type:'box', size:[wt, dep, r*2+wt*2], pos:[hx-r-wt/2, -dep/2, hz       ], move:false, density:1, friction:0.05, restitution:0 });
+    world.add({ type:'box', size:[wt, dep, r*2+wt*2], pos:[hx+r+wt/2, -dep/2, hz       ], move:false, density:1, friction:0.05, restitution:0 });
+
+    // Flagpole
+    const poleM = new THREE.MeshStandardMaterial({ color:0xdddddd, metalness:0.55, roughness:0.35 });
+    const pole  = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 10, 8), poleM);
+    pole.position.set(hx, 5, hz); pole.castShadow = true; scene.add(pole);
+
+    const flag = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 1.3),
+        new THREE.MeshStandardMaterial({ color: FLAG_COLORS[(num-1) % FLAG_COLORS.length], side:THREE.DoubleSide, roughness:0.8 }));
+    flag.position.set(hx + 1.2, 9.2, hz); scene.add(flag);
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  TREES + ROCKS
+// ════════════════════════════════════════════════════════════════════
+function buildTrees(positions) {
+    const trM = new THREE.MeshStandardMaterial({ color:0x5c3916, roughness:0.92 });
+    const lfM = new THREE.MeshStandardMaterial({ color:0x1a6018, roughness:0.88 });
+    positions.forEach(([x, z]) => {
+        const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.5, 4.5, 8), trM);
+        tr.position.set(x, 2.25, z); tr.castShadow = true; scene.add(tr);
+        const lf = new THREE.Mesh(new THREE.ConeGeometry(3.2, 8, 8), lfM);
+        lf.position.set(x, 9.5, z); lf.castShadow = true; scene.add(lf);
+    });
+}
+function buildRocks(positions, mat) {
+    positions.forEach(([x, z]) => {
+        const r = 2.5 + Math.random() * 2.5;
+        const rock = new THREE.Mesh(new THREE.SphereGeometry(r, 7, 5), mat);
+        rock.scale.y = 0.55 + Math.random() * 0.3;
+        rock.position.set(x, r * rock.scale.y * 0.4, z);
+        rock.castShadow = true; scene.add(rock);
+        world.add({ type:'box', size:[r*1.6, r*1.2, r*1.6], pos:[x, r*0.5, z], move:false, density:1, friction:0.7, restitution:0.1 });
+    });
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  BALL
+// ════════════════════════════════════════════════════════════════════
+function buildBall() {
+    ballMesh = new THREE.Mesh(new THREE.SphereGeometry(BALL_R, 32, 32),
+        new THREE.MeshStandardMaterial({ color:0xfafafa, roughness:0.1, metalness:0.05 }));
+    ballMesh.castShadow = true; scene.add(ballMesh);
+
+    const sp = currentCourse.holes[currentHoleIdx].spawn;
+    ballBody = world.add({ type:'sphere', size:[BALL_R], pos:sp, move:true, density:2.0, friction:currentCourse.ballFriction ?? 0.45, restitution:currentCourse.ballRestitution ?? 0.38 });
+    ballBody.linearDamping  = currentCourse.linearDamping ?? 0.42;
+    ballBody.angularDamping = currentCourse.angularDamping ?? 0.65;
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  AIM ARROW
+// ════════════════════════════════════════════════════════════════════
+function buildArrow() {
+    const s = new THREE.Shape();
+    s.moveTo(-0.09,  0.0);
+    s.lineTo( 0.09,  0.0);
+    s.lineTo( 0.09,  4.0);
+    s.lineTo( 0.32,  4.0);
+    s.lineTo( 0.00,  5.6);
+    s.lineTo(-0.32,  4.0);
+    s.lineTo(-0.09,  4.0);
+    s.closePath();
+    arrowMesh = new THREE.Mesh(new THREE.ShapeGeometry(s),
+        new THREE.MeshBasicMaterial({ color:0xffffff, transparent:true, opacity:0.8,
+            side:THREE.DoubleSide, depthTest:false }));
+    arrowMesh.renderOrder = 999;
+    scene.add(arrowMesh);
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  PUTTER  (Balanced Rod-Left, Head-Right design)
+// ════════════════════════════════════════════════════════════════════
+function buildPutter() {
+    putterGrp = new THREE.Group();
+    const shaftLen = 1.6 * BALL_D;
+
+    // Shaft
+    const shM   = new THREE.MeshStandardMaterial({ color:0xb5bec8, metalness:0.82, roughness:0.22 });
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, shaftLen), shM);
+    // Shaft at left side of centered head
+    shaft.position.set(-0.5, -shaftLen / 2, 0); 
+    shaft.castShadow = true;
+    putterGrp.add(shaft);
+
+    // Head
+    const headR     = 0.5;
+    const headThick = 0.45;
+    const hdM = new THREE.MeshStandardMaterial({ color:0x8898a8, metalness:0.66, roughness:0.28 });
+
+    // D-shape centered on headR (x from -R to +R)
+    const shape = new THREE.Shape();
+    shape.moveTo(-headR, 0);     // Left flat edge
+    shape.lineTo(headR, 0);    // Right flat edge
+    for(let i=1; i<=20; i++) {
+        let th = (i/20) * Math.PI;
+        shape.lineTo(headR * Math.cos(th), -headR * Math.sin(th));
+    }
+    
+    const headGeo = new THREE.ExtrudeGeometry(shape, { depth: headThick, bevelEnabled: false });
+    const head = new THREE.Mesh(headGeo, hdM);
+    
+    head.rotation.x = Math.PI / 2;
+    // headGeo centered around X=0, so no positional X offset needed forcentering
+    head.position.set(0, -shaftLen + headThick / 2, 0); 
+    head.castShadow = true;
+    putterGrp.add(head);
+
+    putterGrp.visible = false;
+    scene.add(putterGrp);
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  INPUT — Mouse Move
+// ════════════════════════════════════════════════════════════════════
+function onMouseMove(e) {
+    if (!document.pointerLockElement) return;
+    if (gameState === 'IDLE' || gameState === 'MOVING' || gameState === 'HOLE_IN') {
+        if (cameraLockFrames <= 0) {
+            camYaw   -= e.movementX * 0.005;
+            camPitch += e.movementY * 0.005;   // inverted Y as requested
+            camPitch  = Math.max(0.15, Math.min(1.48, camPitch));
+        }
+    } else if (gameState === 'LOCKED') {
+        // Putter swing: mouse DOWN = pull back (positive swingRaw)
+        swingRaw += e.movementY;
+        swingRaw  = Math.max(-80, Math.min(400, swingRaw));
+        swing     = swingRaw / 400.0;
+        swing     = Math.max(-0.2, Math.min(1.0, swing));
+        document.getElementById('pfill').style.height = Math.max(0, swing * 100) + '%';
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  INPUT — Wheel Zoom
+// ════════════════════════════════════════════════════════════════════
+function onWheel(e) {
+    camDist += e.deltaY * 0.01;
+    camDist   = Math.max(0.5, Math.min(35.0, camDist));
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  INPUT — Click
+// ════════════════════════════════════════════════════════════════════
+function onClick() {
+    if (!document.pointerLockElement) {
+        renderer.domElement.requestPointerLock();
+        return;
+    }
+    if (gameState === 'IDLE') {
+        gameState = 'LOCKED';
+        lockYaw = camYaw; lockPitch = camPitch;
+        swing = 0; prevSwing = 0; swungBack = false; swingRaw = 0;
+        velH.fill(0); velIdx = 0;
+        putterGrp.visible = true;
+        document.getElementById('power-wrap').style.display = 'flex';
+        setUI('red', '↓引く → ↑で打つ   Esc でキャンセル');
+    } else if (gameState === 'LOCKED') {
+        cancelLock();
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  INPUT — Pointer Lock Change
+// ════════════════════════════════════════════════════════════════════
+function onPLC() {
+    if (!document.pointerLockElement) {
+        if (gameState === 'LOCKED') cancelLock();
+        document.body.style.cursor = 'default';
+        setUI('yellow', 'クリックしてゲーム再開');
+    } else {
+        document.body.style.cursor = 'none';
+        if (gameState === 'IDLE') setUI('green', 'マウスでエイム | クリックでロック');
+    }
+}
+
+function cancelLock() {
+    gameState = 'IDLE';
+    putterGrp.visible = false; swing = 0;
+    document.getElementById('power-wrap').style.display = 'none';
+    document.getElementById('pfill').style.height = '0%';
+    setUI('green', 'マウスでエイム | クリックでロック | Esc解除');
+}
+
+function setUI(color, txt) {
+    const c = { green:'#44ff88', red:'#ff4444', yellow:'#ffdd44' }[color] || '#fff';
+    document.getElementById('sdot').style.background = c;
+    document.getElementById('stxt').textContent = txt;
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  FIRE SHOT
+// ════════════════════════════════════════════════════════════════════
+function fireShot() {
+    const avgV = velH.reduce((a, v) => a + Math.abs(v), 0) / 6;
+    // Non-linear scaling: Slow swipes are delicate, fast swipes are explosive (up to 5x max)
+    const powerBase = avgV * 50; 
+    const power = Math.pow(powerBase, 1.6) * (POWER_M / 12); 
+
+    gameState = 'MOVING';
+    cameraLockFrames = 12;  // freeze camera for 12 frames so shot launch is stable
+    putterGrp.visible = false;
+    document.getElementById('power-wrap').style.display = 'none';
+    document.getElementById('pfill').style.height = '0%';
+
+    strokes++;
+    document.getElementById('h-strokes').textContent = strokes;
+    setUI('yellow', '⛳ 転がっています…');
+
+    const bp = ballBody.getPosition();
+    ballBody.applyImpulse(
+        new OIMO.Vec3(bp.x, bp.y, bp.z),
+        new OIMO.Vec3(aimDir.x * power, 0.4, aimDir.z * power)
+    );
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  HOLE DETECTION
+// ════════════════════════════════════════════════════════════════════
+function checkHole() {
+    const bp = ballBody.getPosition();
+    if (bp.y >= -0.35) return; // not deep enough to be in any hole
+
+    const inAnyHole = currentCourse.holes.some(hole => {
+        const dx = bp.x - hole.holeX, dz = bp.z - hole.holeZ;
+        return (dx*dx + dz*dz < (HOLE_R * 0.85)**2);
+    });
+
+    if (inAnyHole) {
+        gameState = 'HOLE_IN';
+        const lv  = ballBody.linearVelocity;
+        lv.x = 0; lv.y = -2.5; lv.z = 0;
+        ballBody.linearDamping = 10;
+
+        totalStrokes += strokes;
+        const isLast = currentHoleIdx >= currentCourse.holes.length - 1;
+
+        document.getElementById('ov-title').textContent = '⛳ HOLE IN!';
+        document.getElementById('ov-sub').innerHTML =
+            `Hole ${currentHoleIdx + 1} — <strong>${strokes}</strong> ストローク` +
+            (isLast ? `<br>コース合計: <strong>${totalStrokes}</strong> ストローク` : '');
+
+        const btnNext = document.getElementById('btn-next');
+        if (isLast) {
+            btnNext.textContent = '🏆 コース終了';
+            btnNext.onclick = courseComplete;
+        } else {
+            btnNext.textContent = 'NEXT HOLE ›';
+            btnNext.onclick = nextHole;
+        }
+        btnNext.style.display = '';
+        document.getElementById('overlay').style.display = 'flex';
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  HOLE / COURSE PROGRESSION
+// ════════════════════════════════════════════════════════════════════
+function nextHole() {
+    currentHoleIdx++;
+    document.getElementById('overlay').style.display = 'none';
+    initGame();   // full scene rebuild for next hole
+}
+window.nextHole = nextHole;
+
+function courseComplete() {
+    document.getElementById('ov-title').textContent = '🏆 コース完了!';
+    document.getElementById('ov-sub').textContent   = `全ホール終了！合計: ${totalStrokes} ストローク`;
+    document.getElementById('btn-next').style.display = 'none';
+}
+window.courseComplete = courseComplete;
+
+// ════════════════════════════════════════════════════════════════════
+//  HUD UPDATE
+// ════════════════════════════════════════════════════════════════════
+function updateHUD() {
+    const hole = currentCourse.holes[currentHoleIdx];
+    document.getElementById('h-hole').textContent    = currentHoleIdx + 1;
+    document.getElementById('h-par').textContent     = hole.par;
+    document.getElementById('h-strokes').textContent = strokes;
+    document.getElementById('hole-bar').textContent  =
+        `HOLE ${currentHoleIdx + 1}  ·  PAR ${hole.par}  —  ${currentCourse.name}`;
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  CAMERA
+// ════════════════════════════════════════════════════════════════════
+function updateCam() {
+    const bp    = ballBody.getPosition();
+    const yaw   = (gameState === 'LOCKED') ? lockYaw   : camYaw;
+    const pitch = (gameState === 'LOCKED') ? lockPitch : camPitch;
+
+    // Follow ball position always, but block rotation control separately in input handlers
+    if (cameraLockFrames > 0) cameraLockFrames--;
+
+    camera.position.set(
+        bp.x + camDist * Math.sin(yaw)   * Math.cos(pitch),
+        bp.y + camDist * Math.sin(pitch),
+        bp.z + camDist * Math.cos(yaw)   * Math.cos(pitch)
+    );
+    camera.up.set(0, 1, 0);
+    camera.lookAt(bp.x, bp.y, bp.z); // Focus center absolutely on ball coordinate
+    camera.updateProjectionMatrix();   // Final sanity check for projection center
+
+    const aYaw = (gameState === 'LOCKED') ? lockYaw : camYaw;
+    aimDir.set(-Math.sin(aYaw), 0, -Math.cos(aYaw)).normalize();
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  ARROW
+// ════════════════════════════════════════════════════════════════════
+function updateArrow() {
+    if (gameState === 'MOVING' || gameState === 'HOLE_IN') { arrowMesh.visible = false; return; }
+    arrowMesh.visible = true;
+    const bp = ballBody.getPosition();
+    arrowMesh.position.set(bp.x, bp.y + 0.08, bp.z);
+    const angle = Math.atan2(aimDir.x, aimDir.z) + Math.PI;
+    Q_TURN.setFromAxisAngle(V_UP, angle);
+    arrowMesh.quaternion.multiplyQuaternions(Q_TURN, Q_FLAT);
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  PUTTER
+// ════════════════════════════════════════════════════════════════════
+function updatePutter() {
+    if (gameState !== 'LOCKED') return;
+    const bp   = ballBody.getPosition();
+    const pull = Math.max(0, Math.min(1.0, swing));
+    const ang  = pull * (140 * Math.PI / 180);
+
+    putterGrp.rotation.set(ang, Math.atan2(aimDir.x, aimDir.z), 0, 'YXZ');
+
+    // Pivot offset: directly above ball center (X=0 now centered), BALL_R behind ball
+    const shaftLen = 1.6 * BALL_D;
+    const qY = new THREE.Quaternion().setFromAxisAngle(V_UP, Math.atan2(aimDir.x, aimDir.z));
+    const offset = new THREE.Vector3(0, shaftLen, -BALL_R); // X=0 is already the center of the head/ball
+    offset.applyQuaternion(qY);
+    putterGrp.position.set(bp.x + offset.x, bp.y + offset.y, bp.z + offset.z);
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  MAIN LOOP
+// ════════════════════════════════════════════════════════════════════
+function onResize() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+}
+
+function resetBall() {
+    const sp = currentCourse.holes[currentHoleIdx].spawn;
+    ballBody.resetPosition(...sp);
+    const lv = ballBody.linearVelocity;
+    const av = ballBody.angularVelocity;
+    lv.x = lv.y = lv.z = 0;
+    av.x = av.y = av.z = 0;
+    if (gameState === 'MOVING') {
+        gameState = 'IDLE';
+        setUI('green', 'マウスでエイム | クリックでロック');
+    }
+}
+
+function animate() {
+    animId = requestAnimationFrame(animate);
+    world.step();
+
+    const bp = ballBody.getPosition();
+    const bq = ballBody.getQuaternion();
+    ballMesh.position.set(bp.x, bp.y, bp.z);
+    ballMesh.quaternion.set(bq.x, bq.y, bq.z, bq.w);
+
+    if (bp.y < -14) resetBall();
+
+    // Swing detection (6-frame velocity)
+    if (gameState === 'LOCKED') {
+        const vel = prevSwing - swing;
+        velH[velIdx % 6] = vel;
+        velIdx++;
+        if (swing > 0.2) swungBack = true;
+        if (swungBack && prevSwing >= 0 && swing < 0) fireShot();
+        prevSwing = swing;
+    }
+
+    // Ball stop
+    if (gameState === 'MOVING') {
+        const v   = ballBody.linearVelocity;
+        const spd = Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+        if (bp.y < 2.0) { v.x *= 0.97; v.z *= 0.97; }
+        if (spd < 0.07) {
+            if (++stopTmr > 45) {
+                v.x = v.y = v.z = 0;
+                ballBody.angularVelocity.x = ballBody.angularVelocity.y = ballBody.angularVelocity.z = 0;
+                stopTmr = 0; gameState = 'IDLE';
+                setUI('green', 'マウスでエイム | クリックでロック');
+            }
+        } else { stopTmr = 0; }
+        checkHole();
+    }
+
+    updateCam();
+    updateArrow();
+    updatePutter();
+    renderer.render(scene, camera);
+}
+</script>
+</body>
+</html>
