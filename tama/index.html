@@ -1176,7 +1176,7 @@
     <script>
         // --- GLOBAL VARIABLES & PARAMS ---/////////////////////////////////////////
         const TAN_35 = 0.70020753821;
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 900;
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth < 900 && (navigator.maxTouchPoints > 0 || 'ontouchstart' in window));
         const params = {
             maxSpeed: 240.0, accel: 4.025, jerk: 0.075, friction: 0.0, gravity: 6.200,
             wallH: 5.791, wallT: 38.84, restitution: 0.4875, size: 263.25,
@@ -2548,12 +2548,13 @@
             const orientation = window.orientation || screen.orientation?.angle || 0;
 
             // 画面の向き(Landscape)に合わせて軸を調整
-            if (orientation === 90) { // 左が上の横画面
-                tiltX = beta; tiltZ = -gamma;
-            } else if (orientation === -90 || orientation === 270) { // 右が上の横画面
-                tiltX = -beta; tiltZ = gamma;
-            } else { // 縦画面 (フォールバック)
-                tiltX = gamma; tiltZ = beta;
+            if (orientation === 90) { // 左が上の横画面 (Landscape Left)
+                // Pitch(beta)は左右の傾き、Roll(gamma)は前後の傾きになる
+                tiltX = -beta; tiltZ = -gamma;
+            } else if (orientation === -90 || orientation === 270) { // 右が上の横画面 (Landscape Right)
+                tiltX = beta; tiltZ = gamma;
+            } else { // 縦画面 (Portrait)
+                tiltX = gamma; tiltZ = -beta;
             }
 
             const deadzone = 5; // デッドゾーン(度): 手ブレ防止
@@ -2599,9 +2600,11 @@
             if (joy) joy.style.display = 'none';
             if (camContainer) camContainer.style.display = 'none';
 
-            // モバイル環境かつ現在のモードに応じた表示
+            // 操作モード別の状態リセット (全デバイス共通)
+            if (mode !== 4) { gyroData.active = false; }
+
+            // モバイル環境またはデバッグ用のUI表示制御
             if (isMobile) {
-                // 移動用UIの表示
                 if (mode === 1) { if (d1) d1.style.display = 'flex'; }
                 else if (mode === 2) { if (d2l) d2l.style.display = 'flex'; if (d2r) d2r.style.display = 'flex'; }
                 else if (mode === 3) { if (joy) joy.style.display = 'block'; }
@@ -2610,6 +2613,11 @@
                 if (camContainer && (cameraMode === '1ST' || cameraMode === '3RD')) {
                     camContainer.style.display = 'flex';
                 }
+            }
+
+            // ジャイロの有効化処理 (デバッグ用にisMobile外でも実行可能にする)
+            if (mode === 4) {
+                requestGyroPermission();
             }
         }
 
