@@ -2550,11 +2550,11 @@
             // 画面の向き(Landscape)に合わせて軸を調整
             if (orientation === 90) { // 左が上の横画面 (Landscape Left)
                 // Pitch(beta)は左右の傾き、Roll(gamma)は前後の傾きになる
-                tiltX = -beta; tiltZ = -gamma;
+                tiltX = -beta; tiltZ = gamma; // ★修正: 前後入力を反転
             } else if (orientation === -90 || orientation === 270) { // 右が上の横画面 (Landscape Right)
-                tiltX = beta; tiltZ = gamma;
+                tiltX = beta; tiltZ = -gamma; // ★修正: 前後入力を反転
             } else { // 縦画面 (Portrait)
-                tiltX = gamma; tiltZ = -beta;
+                tiltX = gamma; tiltZ = beta;  // ★修正: 前後入力を反転
             }
 
             const deadzone = 5; // デッドゾーン(度): 手ブレ防止
@@ -2607,7 +2607,7 @@
             if (isMobile) {
                 if (mode === 1) { if (d1) d1.style.display = 'flex'; }
                 else if (mode === 2) { if (d2l) d2l.style.display = 'flex'; if (d2r) d2r.style.display = 'flex'; }
-                else if (mode === 3) { if (joy) joy.style.display = 'block'; }
+                else if (mode === 3) { if (joy) joy.style.display = 'none'; } // ★修正：初期段階では非表示にする（タップで表示されるよう2,3,4のロジックに任せる）
 
                 // ★追加: カメラスティックの表示（1ST/3RDモード時かつモバイル時のみ）
                 if (camContainer && (cameraMode === '1ST' || cameraMode === '3RD')) {
