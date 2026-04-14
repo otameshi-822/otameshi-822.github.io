@@ -979,42 +979,29 @@
             <div class="custom-left">
                 <div id="spawn-list" style="flex:1; overflow-y:auto; padding:10px;"></div>
                 <div class="form-section"
-                    style="border-top:1px solid #444; padding:10px; background:#222; flex-shrink:0;">
-                    <div style="font-weight:bold; color:#ffd700; margin-bottom:10px; text-align:center;">Add new AI
+                    style="border-top:1px solid #444; padding:5px; background:#222; flex-shrink:0; display:flex; align-items:center; gap:20px;">
+                    <div style="flex:5; position:relative; margin-top:10px; display:flex;">
+                        <input type="range" id="sel-ai-lv-range" min="1" max="10" value="1" oninput="updateAiLvLabel()" style="width:100%;">
+                        <div id="ai-add-lv-display" style="position:absolute; top:-15px; left:0; transform:translateX(-50%); font-weight:bold; color:#ffd700; font-size:10px; pointer-events:none;">LV1</div>
                     </div>
-                    <div class="form-row">
-                        <span>Team:</span>
-                        <div style="width:60%; display:flex; align-items:center; gap:5px;">
-                            <input type="range" id="sel-ai-team-range" min="0" max="5" value="0" step="1"
-                                oninput="updateAiTeamLabel()" style="flex:1;">
-                            <span id="ai-team-label" style="font-weight:bold; color:#E6B422; font-size:11px;">Team
-                                A</span>
-                        </div>
+                    <div style="flex:4; position:relative; margin-top:10px; display:flex;">
+                        <input type="range" id="sel-ai-team-range" min="0" max="5" value="0" step="1" oninput="updateAiTeamLabel()" style="width:100%;">
+                        <div id="ai-team-label" style="position:absolute; top:-15px; left:0; transform:translateX(-50%); font-weight:bold; color:#E6B422; font-size:10px; pointer-events:none; white-space:nowrap;">Team A</div>
                     </div>
-                    <div class="form-row" style="margin-top:25px; position:relative;">
-                        <span>Lv:</span>
-                        <div style="width:60%; display:flex; align-items:center; position:relative;">
-                            <input type="range" id="sel-ai-lv-range" min="1" max="10" value="1"
-                                oninput="updateAiLvLabel()" style="width:100%;">
-                            <div id="ai-add-lv-display"
-                                style="position:absolute; top:-20px; left:0; transform:translateX(-50%); font-weight:bold; color:#ffd700; font-size:12px; pointer-events:none;">
-                                Lv1</div>
-                        </div>
-                    </div>
-                    <button class="add-btn" onclick="addToList()" style="width:100%; margin-top:5px;">Add AI to
-                        list</button>
+                    <button class="add-btn" onclick="addToList()" style="flex: 0 0 auto; width: auto; padding: 0 6px; height: 24px; font-size: 10px; margin: 0; margin-top: 10px;">Add AI</button>
                 </div>
             </div>
             <div class="custom-right">
 
                 <div class="form-section" style="border:1px solid #aaa;">
-                    <div style="font-weight:bold; color:#fff; margin-bottom:10px; text-align:center;">Rules</div>
-                    <div style="margin-bottom:8px; border-bottom:1px solid #444; padding-bottom:8px;">
+                    <div style="font-weight:bold; color:#fff; margin-bottom:10px; text-align:center; border-bottom:1px solid #444; padding-bottom:8px;">Rules</div>
+                    <div style="margin-bottom:8px; border-bottom:1px solid #444; padding-bottom:4px; margin-top:8px;">
                         <label style="display:flex; align-items:center; cursor:pointer;">
-                            <input type="checkbox" id="chk-survival" onchange="updateRuleUI()">
-                            <span style="font-weight:bold; color:#00aaff; margin-left:5px;">Extra</span>
-                            <div style="font-size:9px; color:#aaa;">* ON: Lives displayed. OFF: 1 Life (No Respawn).
+                            <div style="display:flex; align-items:center; width:105px; flex-shrink:0; border-right:1px solid #444; margin-right:8px; padding-bottom:2px; white-space:nowrap;">
+                                <input type="checkbox" id="chk-survival" onchange="updateRuleUI()">
+                                <span style="font-weight:bold; color:#00aaff; margin-left:5px; font-size:13px; white-space:nowrap;">残基制</span>
                             </div>
+                            <div style="font-size:9px; color:#aaa; line-height:1.2;">ON: Lives displayed.<br>OFF: 1 Life.</div>
                         </label>
                         <div id="setting-survival" style="display:none; margin-top:5px; padding-left:10px;">
                             <div class="form-row">
@@ -1024,11 +1011,13 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div style="margin-bottom:8px; border-bottom:1px solid #444; padding-bottom:8px;">
                         <label style="display:flex; align-items:center; cursor:pointer;">
-                            <input type="checkbox" id="chk-knockback" onchange="updateRuleUI()">
-                            <span style="font-weight:bold; color:#ff4500; margin-left:5px;">Knockback</span>
-                            <div style="font-size:9px; color:#aaa;"> * Damage increases impact power.</div>
+                            <div style="display:flex; align-items:center; width:105px; flex-shrink:0; border-right:1px solid #444; margin-right:8px; padding-bottom:2px; white-space:nowrap;">
+                                <input type="checkbox" id="chk-knockback" onchange="updateRuleUI()">
+                                <span style="font-weight:bold; color:#ff4500; margin-left:5px; font-size:13px; white-space:nowrap;">吹っ飛ばし</span>
+                            </div>
+                            <div style="font-size:9px; color:#aaa; line-height:1.2;">Damage increases<br>impact power.</div>
                         </label>
                         <div id="setting-knockback" style="display:none; margin-top:5px; padding-left:10px;">
                             <div class="form-row">
@@ -1050,12 +1039,13 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div style="margin-bottom:8px; border-bottom:1px solid #444; padding-bottom:8px;">
                         <label style="display:flex; align-items:center; cursor:pointer;">
-                            <input type="checkbox" id="chk-escalation" onchange="updateRuleUI()">
-                            <span style="font-weight:bold; color:#00ff00; margin-left:5px;">Escalation</span>
-                            <div style="font-size:9px; color:#aaa; padding-left:10px;"> * Speed increases every 10s.
+                            <div style="display:flex; align-items:center; width:105px; flex-shrink:0; border-right:1px solid #444; margin-right:8px; padding-bottom:2px; white-space:nowrap;">
+                                <input type="checkbox" id="chk-escalation" onchange="updateRuleUI()">
+                                <span style="font-weight:bold; color:#00ff00; margin-left:5px; font-size:13px; white-space:nowrap;">速くなる</span>
                             </div>
+                            <div style="font-size:9px; color:#aaa; line-height:1.2;">Speed increases<br>every 10s.</div>
                         </label>
                         <div id="setting-escalation" style="display:none; margin-top:5px; padding-left:10px;">
                             <div class="form-row">
@@ -1071,12 +1061,13 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div style="margin-bottom:8px; border-bottom:1px solid #444; padding-bottom:8px;">
                         <label style="display:flex; align-items:center; cursor:pointer;">
-                            <input type="checkbox" id="chk-original" onchange="updateRuleUI()">
-                            <span style="font-weight:bold; color:#ff00ff; margin-left:5px;">元</span>
-                            <div style="font-size:9px; color:#aaa; padding-left:10px;"> * Uses specific retro settings.
+                            <div style="display:flex; align-items:center; width:105px; flex-shrink:0; border-right:1px solid #444; margin-right:8px; padding-bottom:2px; white-space:nowrap;">
+                                <input type="checkbox" id="chk-original" onchange="updateRuleUI()">
+                                <span style="font-weight:bold; color:#ff00ff; margin-left:5px; font-size:13px; white-space:nowrap;">元</span>
                             </div>
+                            <div style="font-size:9px; color:#aaa; line-height:1.2;">Uses specific<br>retro settings.</div>
                         </label>
                         <div id="setting-original"
                             style="display:none; margin-top:5px; margin-bottom:5px; padding-left:10px;">
@@ -1411,6 +1402,7 @@
                 label.style.color = teamColorMap[team] || 'white';
             }
             renderSpawnList();
+            if (typeof saveTeams === "function") saveTeams();
         }
 
         function updateAiTeamLabel() {
@@ -1419,6 +1411,13 @@
             const label = document.getElementById('ai-team-label');
             label.innerText = "Team " + team;
             label.style.color = teamColorMap[team] || 'white';
+            const slider = document.getElementById('sel-ai-team-range');
+            const sliderWidth = slider.offsetWidth;
+            const thumbWidth = 16;
+            const trackWidth = sliderWidth - thumbWidth;
+            const ratio = (slider.value - slider.min) / (slider.max - slider.min);
+            const left = (thumbWidth / 2) + (ratio * trackWidth);
+            label.style.left = left + "px";
         }
 
         function updateAiLvLabel() {
@@ -2644,12 +2643,52 @@
 
 
 
+        function saveTeams() {
+            const aiData = pendingSpawnList.map(ai => ({ lv: ai.lv, team: ai.team }));
+            const remoteData = [];
+            for (let id in remoteEntities) {
+                if (remoteEntities[id].body && remoteEntities[id].body.name) {
+                    remoteData.push({ peerId: id, name: remoteEntities[id].body.name, team: remotePlayerTeams[id] || remoteEntities[id].body.team || "B", participation: remotePlayerParticipation[id] });
+                }
+            }
+            localStorage.setItem("rigidBallTeams", JSON.stringify({ playerTeam, localParticipation: localPlayerParticipation, aiList: aiData, remotePlayers: remoteData }));
+        }
+
+        function loadTeams() {
+            const dataStr = localStorage.getItem("rigidBallTeams");
+            if (!dataStr) return;
+            try {
+                const teamConfig = JSON.parse(dataStr);
+                if (teamConfig.playerTeam) playerTeam = teamConfig.playerTeam;
+                if (typeof teamConfig.localParticipation !== "undefined") localPlayerParticipation = teamConfig.localParticipation;
+                if (teamConfig.aiList && Array.isArray(teamConfig.aiList)) {
+                    pendingSpawnList = [];
+                    teamConfig.aiList.forEach(ai => {
+                        pendingSpawnList.push({ team: ai.team, lv: ai.lv, id: Date.now() + Math.random() });
+                    });
+                }
+                if (teamConfig.remotePlayers && Array.isArray(teamConfig.remotePlayers)) {
+                    teamConfig.remotePlayers.forEach(rp => {
+                        let foundId = null;
+                        for (let curId in remoteEntities) {
+                            if (remoteEntities[curId].body && remoteEntities[curId].body.name === rp.name) { foundId = curId; break; }
+                        }
+                        if (foundId) {
+                            remotePlayerTeams[foundId] = rp.team;
+                            if (typeof rp.participation !== "undefined") remotePlayerParticipation[foundId] = rp.participation;
+                        }
+                    });
+                }
+            } catch (e) { console.error("Failed to load teams", e); }
+        }
+
         function openCustomDialog() {
             if (isCustomMatchActive) return;
             document.getElementById('custom-dialog').style.display = 'flex';
             if (!isClientMode) {
                 for (let id in remoteEntities) { if (!remotePlayerTeams[id]) remotePlayerTeams[id] = remoteEntities[id].body.team !== "none" ? remoteEntities[id].body.team : "B"; }
             }
+            loadTeams();
             renderSpawnList(); updateRuleUI();
         }
 
@@ -2659,12 +2698,15 @@
             let sSpd = parseFloat(sInp.value) || 0;
             let mSpd = parseFloat(mInp.value) || 0;
             if (source === 'start') {
-                if (sSpd > mSpd) mInp.value = sSpd;
-                // ★追加: 元モードの最大速度も同期し、ライブ反映
+                if (sSpd > mSpd) { mInp.value = sSpd; mSpd = sSpd; }
                 const oMaxInp = document.getElementById('sel-orig-max-speed');
-                if (oMaxInp) { oMaxInp.value = sSpd; applyOrigLive(); }
+                if (oMaxInp) { oMaxInp.value = sSpd; applyOrigLive('from_esc'); }
             } else if (source === 'max') {
-                if (mSpd < sSpd) sInp.value = mSpd;
+                if (mSpd < sSpd) { 
+                    sInp.value = mSpd; sSpd = mSpd; 
+                    const oMaxInp = document.getElementById('sel-orig-max-speed');
+                    if (oMaxInp) { oMaxInp.value = sSpd; applyOrigLive('from_esc'); }
+                }
             }
         }
 
@@ -2700,12 +2742,14 @@
             applyOrigLive();
         }
 
-        function applyOrigLive() {
-            if (!isOriginalActive) return;
+        function applyOrigLive(source) {
             const ms = parseFloat(document.getElementById('sel-orig-max-speed').value) || 200;
-            // ★追加: Escalationの初期速度も同期
-            const eStartInp = document.getElementById('sel-esc-start-speed');
-            if (eStartInp) eStartInp.value = ms;
+            // ★追加: Escalationの初期速度も同期 (Match開始前や非アクティブ時でもフォームのみ連動させる)
+            if (source !== 'from_esc') {
+                const eStartInp = document.getElementById('sel-esc-start-speed');
+                if (eStartInp) { eStartInp.value = ms; syncEscSettings('start'); }
+            }
+            if (!isOriginalActive) return;
             
             const ac = parseFloat(document.getElementById('sel-orig-accel').value) || 2.25;
             const jk = parseFloat(document.getElementById('sel-orig-jerk').value) || 0.35;
@@ -2747,26 +2791,26 @@
             renderSpawnList();
         }
 
-        function closeCustomDialog() { document.getElementById('custom-dialog').style.display = 'none'; }
+        function closeCustomDialog() { saveTeams(); document.getElementById('custom-dialog').style.display = 'none'; }
         function addToList() {
             const tVal = parseInt(document.getElementById('sel-ai-team-range').value); const team = teamNames[tVal];
             const lv = parseInt(document.getElementById('sel-ai-lv-range').value);
-            pendingSpawnList.push({ team, lv, id: Date.now() + Math.random() }); renderSpawnList();
+            pendingSpawnList.push({ team, lv, id: Date.now() + Math.random() }); renderSpawnList(); saveTeams();
         }
-        function removeFromList(id) { pendingSpawnList = pendingSpawnList.filter(item => item.id !== id); renderSpawnList(); }
-        function updateRemoteTeam(id, team) { remotePlayerTeams[id] = team; renderSpawnList(); }
+        function removeFromList(id) { pendingSpawnList = pendingSpawnList.filter(item => item.id !== id); renderSpawnList(); saveTeams(); }
+        function updateRemoteTeam(id, team) { remotePlayerTeams[id] = team; renderSpawnList(); saveTeams(); }
         function updateAiTeam(id, team) {
             const ai = pendingSpawnList.find(i => i.id === id);
             if (ai) ai.team = team;
-            renderSpawnList();
+            renderSpawnList(); saveTeams();
         }
         function toggleParticipation(id) {
             remotePlayerParticipation[id] = (remotePlayerParticipation[id] !== false) ? false : true;
-            renderSpawnList();
+            renderSpawnList(); saveTeams();
         }
         function toggleLocalParticipation() {
             localPlayerParticipation = (localPlayerParticipation !== false) ? false : true;
-            renderSpawnList();
+            renderSpawnList(); saveTeams();
         }
 
         function renderSpawnList() {
