@@ -981,27 +981,40 @@
                 <div class="form-section"
                     style="border-top:1px solid #444; padding:5px; background:#222; flex-shrink:0; display:flex; align-items:center; gap:20px;">
                     <div style="flex:5; position:relative; margin-top:10px; display:flex;">
-                        <input type="range" id="sel-ai-lv-range" min="1" max="10" value="1" oninput="updateAiLvLabel()" style="width:100%;">
-                        <div id="ai-add-lv-display" style="position:absolute; top:-15px; left:0; transform:translateX(-50%); font-weight:bold; color:#ffd700; font-size:10px; pointer-events:none;">LV1</div>
+                        <input type="range" id="sel-ai-lv-range" min="1" max="10" value="1" oninput="updateAiLvLabel()"
+                            style="width:100%;">
+                        <div id="ai-add-lv-display"
+                            style="position:absolute; top:-15px; left:0; transform:translateX(-50%); font-weight:bold; color:#ffd700; font-size:10px; pointer-events:none;">
+                            LV1</div>
                     </div>
                     <div style="flex:4; position:relative; margin-top:10px; display:flex;">
-                        <input type="range" id="sel-ai-team-range" min="0" max="5" value="0" step="1" oninput="updateAiTeamLabel()" style="width:100%;">
-                        <div id="ai-team-label" style="position:absolute; top:-15px; left:0; transform:translateX(-50%); font-weight:bold; color:#E6B422; font-size:10px; pointer-events:none; white-space:nowrap;">Team A</div>
+                        <input type="range" id="sel-ai-team-range" min="0" max="5" value="0" step="1"
+                            oninput="updateAiTeamLabel()" style="width:100%;">
+                        <div id="ai-team-label"
+                            style="position:absolute; top:-15px; left:0; transform:translateX(-50%); font-weight:bold; color:#E6B422; font-size:10px; pointer-events:none; white-space:nowrap;">
+                            Team A</div>
                     </div>
-                    <button class="add-btn" onclick="addToList()" style="flex: 0 0 auto; width: auto; padding: 0 6px; height: 24px; font-size: 10px; margin: 0; margin-top: 10px;">Add AI</button>
+                    <button class="add-btn" onclick="addToList()"
+                        style="flex: 0 0 auto; width: auto; padding: 0 6px; height: 24px; font-size: 10px; margin: 0; margin-top: 10px;">Add
+                        AI</button>
                 </div>
             </div>
             <div class="custom-right">
 
                 <div class="form-section" style="border:1px solid #aaa;">
-                    <div style="font-weight:bold; color:#fff; margin-bottom:10px; text-align:center; border-bottom:1px solid #444; padding-bottom:8px;">Rules</div>
+                    <div
+                        style="font-weight:bold; color:#fff; margin-bottom:10px; text-align:center; border-bottom:1px solid #444; padding-bottom:8px;">
+                        Rules</div>
                     <div style="margin-bottom:8px; border-bottom:1px solid #444; padding-bottom:4px; margin-top:8px;">
                         <label style="display:flex; align-items:center; cursor:pointer;">
-                            <div style="display:flex; align-items:center; width:105px; flex-shrink:0; border-right:1px solid #444; margin-right:8px; padding-bottom:2px; white-space:nowrap;">
+                            <div
+                                style="display:flex; align-items:center; width:105px; flex-shrink:0; border-right:1px solid #444; margin-right:8px; padding-bottom:2px; white-space:nowrap;">
                                 <input type="checkbox" id="chk-survival" onchange="updateRuleUI()">
-                                <span style="font-weight:bold; color:#00aaff; margin-left:5px; font-size:13px; white-space:nowrap;">残基制</span>
+                                <span
+                                    style="font-weight:bold; color:#00aaff; margin-left:5px; font-size:13px; white-space:nowrap;">残基制</span>
                             </div>
-                            <div style="font-size:9px; color:#aaa; line-height:1.2;">ON: Lives displayed.<br>OFF: 1 Life.</div>
+                            <div style="font-size:9px; color:#aaa; line-height:1.2;">ON: Lives displayed.<br>OFF: 1
+                                Life.</div>
                         </label>
                         <div id="setting-survival" style="display:none; margin-top:5px; padding-left:10px;">
                             <div class="form-row">
@@ -1013,11 +1026,14 @@
 
                     <div style="margin-bottom:8px; border-bottom:1px solid #444; padding-bottom:8px;">
                         <label style="display:flex; align-items:center; cursor:pointer;">
-                            <div style="display:flex; align-items:center; width:105px; flex-shrink:0; border-right:1px solid #444; margin-right:8px; padding-bottom:2px; white-space:nowrap;">
+                            <div
+                                style="display:flex; align-items:center; width:105px; flex-shrink:0; border-right:1px solid #444; margin-right:8px; padding-bottom:2px; white-space:nowrap;">
                                 <input type="checkbox" id="chk-knockback" onchange="updateRuleUI()">
-                                <span style="font-weight:bold; color:#ff4500; margin-left:5px; font-size:13px; white-space:nowrap;">吹っ飛ばし</span>
+                                <span
+                                    style="font-weight:bold; color:#ff4500; margin-left:5px; font-size:13px; white-space:nowrap;">吹っ飛ばし</span>
                             </div>
-                            <div style="font-size:9px; color:#aaa; line-height:1.2;">Damage increases<br>impact power.</div>
+                            <div style="font-size:9px; color:#aaa; line-height:1.2;">Damage increases<br>impact power.
+                            </div>
                         </label>
                         <div id="setting-knockback" style="display:none; margin-top:5px; padding-left:10px;">
                             <div class="form-row">
@@ -1041,9 +1057,11 @@
 
                     <div style="margin-bottom:8px; border-bottom:1px solid #444; padding-bottom:8px;">
                         <label style="display:flex; align-items:center; cursor:pointer;">
-                            <div style="display:flex; align-items:center; width:105px; flex-shrink:0; border-right:1px solid #444; margin-right:8px; padding-bottom:2px; white-space:nowrap;">
+                            <div
+                                style="display:flex; align-items:center; width:105px; flex-shrink:0; border-right:1px solid #444; margin-right:8px; padding-bottom:2px; white-space:nowrap;">
                                 <input type="checkbox" id="chk-escalation" onchange="updateRuleUI()">
-                                <span style="font-weight:bold; color:#00ff00; margin-left:5px; font-size:13px; white-space:nowrap;">速くなる</span>
+                                <span
+                                    style="font-weight:bold; color:#00ff00; margin-left:5px; font-size:13px; white-space:nowrap;">速くなる</span>
                             </div>
                             <div style="font-size:9px; color:#aaa; line-height:1.2;">Speed increases<br>every 10s.</div>
                         </label>
@@ -1063,11 +1081,14 @@
 
                     <div style="margin-bottom:8px; border-bottom:1px solid #444; padding-bottom:8px;">
                         <label style="display:flex; align-items:center; cursor:pointer;">
-                            <div style="display:flex; align-items:center; width:105px; flex-shrink:0; border-right:1px solid #444; margin-right:8px; padding-bottom:2px; white-space:nowrap;">
+                            <div
+                                style="display:flex; align-items:center; width:105px; flex-shrink:0; border-right:1px solid #444; margin-right:8px; padding-bottom:2px; white-space:nowrap;">
                                 <input type="checkbox" id="chk-original" onchange="updateRuleUI()">
-                                <span style="font-weight:bold; color:#ff00ff; margin-left:5px; font-size:13px; white-space:nowrap;">元</span>
+                                <span
+                                    style="font-weight:bold; color:#ff00ff; margin-left:5px; font-size:13px; white-space:nowrap;">元</span>
                             </div>
-                            <div style="font-size:9px; color:#aaa; line-height:1.2;">Uses specific<br>retro settings.</div>
+                            <div style="font-size:9px; color:#aaa; line-height:1.2;">Uses specific<br>retro settings.
+                            </div>
                         </label>
                         <div id="setting-original"
                             style="display:none; margin-top:5px; margin-bottom:5px; padding-left:10px;">
@@ -1092,13 +1113,15 @@
                                     value="31" oninput="updateOrigFOV()"></div>
                             <div class="form-row"><span>Slope Angle:</span> <input type="number" id="sel-orig-slope"
                                     value="0"></div>
-                            <div class="form-row"><span>Restitution:</span> <input type="number" id="sel-orig-restitution"
-                                    value="0.4875" step="0.05" min="0" max="3"></div>
+                            <div class="form-row"><span>Restitution:</span> <input type="number"
+                                    id="sel-orig-restitution" value="0.4875" step="0.05" min="0" max="3"></div>
                             <div style="display:flex; gap:4px; margin-top:5px;">
                                 <button id="btn-orig-scene" onclick="toggleOrigScene()"
-                                    style="flex:1; padding:2px; font-size:10px; cursor:pointer; background:#445; border:1px solid #aaf; color:#fff; border-radius:3px;">シーン: ON</button>
+                                    style="flex:1; padding:2px; font-size:10px; cursor:pointer; background:#445; border:1px solid #aaf; color:#fff; border-radius:3px;">シーン:
+                                    ON</button>
                                 <button id="btn-orig-softcap" onclick="toggleOrigSoftcap()"
-                                    style="flex:1; padding:2px; font-size:10px; cursor:pointer; background:#333; border:1px solid #888; color:#aaa; border-radius:3px;">速度解放: OFF</button>
+                                    style="flex:1; padding:2px; font-size:10px; cursor:pointer; background:#333; border:1px solid #888; color:#aaa; border-radius:3px;">速度解放:
+                                    OFF</button>
                                 <button onclick="resetOrigSettings()"
                                     style="flex:1; padding:2px; font-size:10px; cursor:pointer;"
                                     class="remove-btn">初期値にリセット</button>
@@ -1466,7 +1489,7 @@
                     // ★生存している他球を優先的に選ぶ
                     aiEntities.forEach(e => { if (e.body && e.body.isAlive) list.push({ id: e.id, body: e.body, mesh: e.mesh }); });
                     for (let id in remoteEntities) { const re = remoteEntities[id]; if (re.body && re.body.isAlive) list.push({ id: id, body: re.body, mesh: re.mesh }); }
-                    
+
                     // 生存者が誰もいない場合や、切り替え前などは自分も候補に入れるが、通常は生存者を優先
                     if (list.length === 0) {
                         if (ballBody.isMatchParticipant) list.push({ id: myPeerId, body: ballBody, mesh: sphere });
@@ -1504,16 +1527,16 @@
 
             if (cameraMode === 'DEFAULT' && (!ballBody.isAlive || isOutOfArena)) {
                 // 落下中または場外待機中のデフォルト鳥瞰視点
-                sphere.visible = ballBody.isAlive && !targetEntity; 
+                sphere.visible = ballBody.isAlive && !targetEntity;
                 if (myNameSprite && !ballBody.isAlive) myNameSprite.visible = false;
-                
+
                 const snapY = isMobile ? (isPortrait ? (document.fullscreenElement ? 1250 : 1150) : 630) : 550;
                 const snapZ = isMobile ? (isPortrait ? (document.fullscreenElement ? 1250 : 1150) : 630) : 550;
-                
+
                 const targetFov = isOriginalActive ? origParams.camFov : 25;
                 if (camera.near !== 1 || camera.fov !== targetFov) {
-                    camera.near = 1; camera.far = 5000; 
-                    camera.fov = targetFov; 
+                    camera.near = 1; camera.far = 5000;
+                    camera.fov = targetFov;
                     camera.updateProjectionMatrix();
                 }
                 if (instant) {
@@ -1531,7 +1554,7 @@
             if (cameraMode !== 'DEFAULT' && targetEntity && !targetEntity.body.isAlive) {
                 sphere.visible = (targetEntity.id === myPeerId);
                 if (myNameSprite && targetEntity.id === myPeerId) myNameSprite.visible = false;
-                
+
                 const camTargetY = 350; const camTargetZ = 250;
                 const targetFov = isOriginalActive ? origParams.camFov : 25;
                 if (camera.near !== 1 || camera.fov !== targetFov) {
@@ -1591,18 +1614,18 @@
                         const currentCamDist = Math.sqrt((targetY * totalRatio) ** 2 + ((targetZ - 30) * totalRatio) ** 2);
                         let visibleRadius = currentCamDist * halfFovTan;
                         if (aspect < 1.0) visibleRadius *= aspect;
-                        
+
                         let limit = visibleRadius * 0.85;
                         const distFromCenter = Math.sqrt(currentPos.x * currentPos.x + currentPos.z * currentPos.z);
                         if (distFromCenter > limit) { totalRatio *= (distFromCenter / limit); }
-                        
+
                         // ★追加: 元モードでフィールドが広すぎる場合、AutoZoomを補正してフィールド全体が収まるようにする
                         if (isOriginalActive) {
-                             const fieldRadius = (params.size / 2) + params.wallT;
-                             if (visibleRadius < fieldRadius * 1.05) {
-                                 const minRatioRequired = (fieldRadius * 1.05) / (currentCamDist * halfFovTan * (aspect < 1.0 ? aspect : 1.0));
-                                 if (totalRatio < minRatioRequired) totalRatio = minRatioRequired;
-                             }
+                            const fieldRadius = (params.size / 2) + params.wallT;
+                            if (visibleRadius < fieldRadius * 1.05) {
+                                const minRatioRequired = (fieldRadius * 1.05) / (currentCamDist * halfFovTan * (aspect < 1.0 ? aspect : 1.0));
+                                if (totalRatio < minRatioRequired) totalRatio = minRatioRequired;
+                            }
                         }
                     }
                 }
@@ -1878,7 +1901,7 @@
                         this.championModel.setWeights(this.model.getWeights());
 
                         this.optimizer = tf.train.adam(0.0005);
-                        this.isReady = true;                        
+                        this.isReady = true;
                     },
 
                     buildModel: function () {
@@ -2447,8 +2470,8 @@
         let lastSyncTime = 0;
         let lastSendTime = 0;
         let controlMode = 1;
-        
-        
+
+
         // ★追加: D-Padのドラッグ移動ロジック
         function setupDraggableDpad(handleId, containerId) {
             const handle = document.getElementById(handleId);
@@ -2702,8 +2725,8 @@
                 const oMaxInp = document.getElementById('sel-orig-max-speed');
                 if (oMaxInp) { oMaxInp.value = sSpd; applyOrigLive('from_esc'); }
             } else if (source === 'max') {
-                if (mSpd < sSpd) { 
-                    sInp.value = mSpd; sSpd = mSpd; 
+                if (mSpd < sSpd) {
+                    sInp.value = mSpd; sSpd = mSpd;
                     const oMaxInp = document.getElementById('sel-orig-max-speed');
                     if (oMaxInp) { oMaxInp.value = sSpd; applyOrigLive('from_esc'); }
                 }
@@ -2728,17 +2751,17 @@
         function updateOrigFOV() {
             const size = parseFloat(document.getElementById('sel-orig-size').value) || 298.25;
             const wallT = parseFloat(document.getElementById('sel-orig-wall-t').value) || 31;
-            
+
             // フィールドサイズ＋壁幅(の余裕を持たせた1.07倍)を、固定カメラ位置(距離:413.4)からFOVで収めるための逆算
             const reqRadius = (size / 2 + wallT) * 1.07;
             const dist = 413.4;
             const minHalfFovTan = reqRadius / dist;
             let recommendedFov = Math.atan(minHalfFovTan) * 2 * (180 / Math.PI);
             recommendedFov = Math.min(170, Math.max(10, Math.round(recommendedFov)));
-            
+
             const fovInp = document.getElementById('sel-orig-cam-fov');
             if (fovInp) fovInp.value = recommendedFov;
-            
+
             applyOrigLive();
         }
 
@@ -2750,14 +2773,14 @@
                 if (eStartInp) { eStartInp.value = ms; syncEscSettings('start'); }
             }
             if (!isOriginalActive) return;
-            
+
             const ac = parseFloat(document.getElementById('sel-orig-accel').value) || 2.25;
             const jk = parseFloat(document.getElementById('sel-orig-jerk').value) || 0.35;
             const gr = parseFloat(document.getElementById('sel-orig-grav').value) || 3.3;
             const re = parseFloat(document.getElementById('sel-orig-restitution').value);
             const rawFov = parseFloat(document.getElementById('sel-orig-cam-fov').value);
             const fov = isNaN(rawFov) ? 50 : rawFov; // ★修正: fovが未定義で呼び出されていたバグを修正
-            
+
             origParams.camFov = fov; origParams.maxSpeed = ms; origParams.accel = ac; origParams.jerk = jk; origParams.gravity = gr; origParams.restitution = isNaN(re) ? 0.4875 : re;
             params.maxSpeed = ms; params.accel = ac; params.jerk = jk; params.gravity = gr; params.restitution = origParams.restitution;
             if (typeof world !== 'undefined' && world.gravity) world.gravity.set(0, -gr * 60, 0);
@@ -3075,7 +3098,7 @@
                 scene.remove(originalModeLight);
                 originalModeLight = null;
             }
-            buildStadium(false); 
+            buildStadium(false);
             rebuildAllBalls(); // ★サイズ・反発係数の変更を反映
 
             // ★後ろからループして共通関数でAIをすべて安全に削除
@@ -3105,7 +3128,7 @@
                     restitution: params.restitution
                 }
             });
-            resetAll(); 
+            resetAll();
             setCameraMode(cameraMode, true); // ★現在のカメラモードを強制再適用してスナップ(1,2,3キーと同じ処理)
             addLog("Match Stopped. Returned to Standard.");
         }
@@ -3459,6 +3482,7 @@
         }
 
         myNameSprite = null; let lastPlayerName = ""; let lastPlayerKills = -1; let lastPlayerLives = -1; let lastPlayerStress = -1; let sharedTorusGeom = new THREE.TorusGeometry(params.ballRadius * 0.5, 0.2, 8, 24);
+        let sharedSparkGeom = new THREE.BoxGeometry(0.8, 0.8, 0.8);
 
         function updateSprite(obj, body, currentSprite) {
             let livesVal = -1;
@@ -3594,14 +3618,34 @@
         }
         function getRandomPos() { const range = (params.size / 2) * 0.7; return { x: (Math.random() - 0.5) * range * 2, z: (Math.random() - 0.5) * range * 2 }; }
         const effects = [];
-        function createShockwave(x, y, z, nx, ny, nz, customSpeed) {
-            const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 });
+        function createShockwave(x, y, z, nx, ny, nz, impactSpeed = 100) {
+            // 衝突速度(impactSpeed)に応じて減衰率(寿命)を計算
+            // 速度 0〜400 の範囲で、0.5秒(0.033)〜2.0秒(0.0083)程度の寿命にする
+            const speedFact = Math.min(1.0, impactSpeed / 400);
+            const decayRate = 0.0166 / speedFact;
+            // リングエフェクト (以前の仕様に戻す)
+            const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
             const ring = new THREE.Mesh(sharedTorusGeom, ringMat);
             ring.position.set(x, y, z);
             ring.lookAt(new THREE.Vector3(x + nx, y + ny, z + nz));
+            ring.scale.set(1.0, 1.0, 1.0); // 標準サイズから
             scene.add(ring);
-            // ★ customSpeed が指定されていればその値を使い、なければデフォルトの 0.5 にする
-            effects.push({ mesh: ring, life: 1.0, speed: customSpeed !== undefined ? customSpeed : 0.5 });
+            effects.push({ type: 'ring', mesh: ring, life: 1.0, speed: 1.2, decayRate: decayRate });
+
+            // 火花エフェクト (25個)
+            for (let i = 0; i < 25; i++) {
+                const sMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 1.0 });
+                const spark = new THREE.Mesh(sharedSparkGeom, sMat);
+                spark.position.set(x, y, z);
+
+                const speed = 2.5 + Math.random() * 9.5;
+                const vx = (nx + (Math.random() - 0.3) * 2.5) * speed;
+                const vy = (ny + (Math.random() - 0.3) * 2.5) * speed;
+                const vz = (nz + (Math.random() - 0.3) * 2.5) * speed;
+
+                scene.add(spark);
+                effects.push({ type: 'spark', mesh: spark, velocity: new THREE.Vector3(vx, vy, vz), life: 1.0, decayRate: decayRate });
+            }
         }
         function handleClientVisualCollisions() {
             if (!isClientMode) return;
@@ -3658,8 +3702,8 @@
                                 const midY = (e1.pos.y + e2.pos.y) / 2;
                                 const midZ = (e1.pos.z + e2.pos.z) / 2;
 
-                                // ★提案3: 大きさをホスト側と完全に統一するため、追加の引数を渡さない(デフォルトの0.5を使う)
-                                createShockwave(midX, midY, midZ, nx, ny, nz);
+                                // ★衝突速度を渡す
+                                createShockwave(midX, midY, midZ, nx, ny, nz, Math.max(speed1, speed2));
                             }
                         }
                     } else {
@@ -3977,7 +4021,7 @@
                     maxSpeed: params.maxSpeed, accel: params.accel, jerk: params.jerk, gravity: params.gravity,
                     size: params.size, wallH: params.wallH, wallT: params.wallT, ballRadius: params.ballRadius,
                     camFov: origParams.camFov, slopeAngle: origParams.slopeAngle,
-                    restitution: params.restitution 
+                    restitution: params.restitution
                 }
             });
         }
@@ -4115,12 +4159,12 @@
                         const oRad = document.getElementById('sel-orig-ball-size'); if (oRad) oRad.value = params.ballRadius;
                         const oFov = document.getElementById('sel-orig-cam-fov'); if (oFov) oFov.value = origParams.camFov;
                     }
-                    
+
                     // ★追加：リセット時にUI入力も初期値に戻す
-                    resetOrigSettings(); 
-                    
+                    resetOrigSettings();
+
                     buildStadium(false);
-                    rebuildAllBalls(); 
+                    rebuildAllBalls();
                     updateSpeedStats(); // ★HUD/速度表示の基準を更新
                 }
 
@@ -4143,7 +4187,7 @@
                 });
 
                 if (isClientMode) {
-                    document.getElementById('main-ctrl-btns').style.display = 'flex'; 
+                    document.getElementById('main-ctrl-btns').style.display = 'flex';
                     setCameraMode(cameraMode, true); // ★全てのリセット処理が終わった後にカメラ設定を再適用(1,2,3キーと同等)
                 }
                 updateLeaderboard(); return;
@@ -4207,8 +4251,8 @@
                     if (!target) { target = aiEntities.find(e => e.id === data.id); isAI = true; }
                     if (target) {
                         if (!isClientMode && target.body) { target.body.resetPosition(data.pos.x, data.pos.y, data.pos.z); target.body.linearVelocity.set(0, 0, 0); }
-                        if (target.body) { 
-                            target.body.lives = newLives; target.body.stress = newStress; target.body.isAlive = true; 
+                        if (target.body) {
+                            target.body.lives = newLives; target.body.stress = newStress; target.body.isAlive = true;
                             if (newGiven !== null) {
                                 target.body.totalStressGiven = newGiven;
                             }
@@ -4378,7 +4422,7 @@
                         }
                     });
 
-                    if (Math.abs(vNormal) > 12) createShockwave((p1.x + p2.x) / 2, (p1.y + p2.y) / 2, (p1.z + p2.z) / 2, nx, ny, nz);
+                    if (Math.abs(vNormal) > 12) createShockwave((p1.x + p2.x) / 2, (p1.y + p2.y) / 2, (p1.z + p2.z) / 2, nx, ny, nz, Math.abs(vNormal));
                 }
             }
         }
@@ -4417,36 +4461,36 @@
                 const myVel = entity.body.linearVelocity; const mySpeed = Math.sqrt(myVel.x ** 2 + myVel.z ** 2);
 
                 let dodgeAction = false;
-                if (lvNum >= 6 && mySpeed > -1) { 
+                if (lvNum >= 6 && mySpeed > -1) {
                     for (let c of candidates) {
                         if (!c || c === entity.body || c.getPosition().y < -100 || !c.isAlive || (c.team === myTeam && myTeam !== "none")) continue;
                         const cPos = c.getPosition(), cVel = c.linearVelocity;
                         const dx = cPos.x - ePos.x, dz = cPos.z - ePos.z;
                         const dist = Math.sqrt(dx * dx + dz * dz) || 1;
-                        if (dist < 250) { 
+                        if (dist < 250) {
                             const relVx = cVel.x - myVel.x;
                             const relVz = cVel.z - myVel.z;
                             const relSpdSq = relVx * relVx + relVz * relVz;
-                            
+
                             if (relSpdSq > 100) { // ある程度の相対速度がある場合のみ
                                 // CPA (Closest Point of Approach) の計算
                                 const tCPA = -(dx * relVx + dz * relVz) / relSpdSq;
-                                
+
                                 if (tCPA > 0 && tCPA < 45) { // 45フレーム（約0.75秒）以内に最接近
                                     const cpaX = dx + relVx * tCPA;
                                     const cpaZ = dz + relVz * tCPA;
                                     const cpaDistSq = cpaX * cpaX + cpaZ * cpaZ;
-                                    
+
                                     // 衝突圏内（自機と敵の半径の合計より少し大きい程度）
                                     if (cpaDistSq < (params.ballRadius * 2.5) ** 2) {
                                         // 回避方向（相対速度ベクトルの垂直方向）
                                         const speed = Math.sqrt(relSpdSq);
                                         const perpX1 = -relVz / speed, perpZ1 = relVx / speed;
                                         const perpX2 = relVz / speed, perpZ2 = -relVx / speed;
-                                        
-                                        const dist1 = (ePos.x + perpX1*100)**2 + (ePos.z + perpZ1*100)**2;
-                                        const dist2 = (ePos.x + perpX2*100)**2 + (ePos.z + perpZ2*100)**2;
-                                        
+
+                                        const dist1 = (ePos.x + perpX1 * 100) ** 2 + (ePos.z + perpZ1 * 100) ** 2;
+                                        const dist2 = (ePos.x + perpX2 * 100) ** 2 + (ePos.z + perpZ2 * 100) ** 2;
+
                                         let dodgeVx, dodgeVz;
                                         if (dist1 < dist2) { dodgeVx = perpX1 * params.maxSpeed; dodgeVz = perpZ1 * params.maxSpeed; }
                                         else { dodgeVx = perpX2 * params.maxSpeed; dodgeVz = perpZ2 * params.maxSpeed; }
@@ -4454,12 +4498,12 @@
                                         // 慣性キャンセリングを使った回避入力
                                         targetX = dodgeVx - myVel.x;
                                         targetZ = dodgeVz - myVel.z;
-                                        
+
                                         // 空中回避（Lv8以上で近距離なら緊急ジャンプ）
                                         if (lvNum >= 8 && ePos.y < 15 && dist < params.ballRadius * 4) {
                                             entity.body.applyImpulse(ePos, { x: 0, y: 150, z: 0 });
                                         }
-                                        
+
                                         dodgeAction = true; break;
                                     }
                                 }
@@ -4500,67 +4544,67 @@
                         });
 
                         if (target) {
-                            const tPos = target.getPosition(); const tVel = target.linearVelocity; 
+                            const tPos = target.getPosition(); const tVel = target.linearVelocity;
 
                             // ★追加: 相手の加速度（ジャーク）を前フレームの速度から推定
                             target.oldVelocity = target.oldVelocity || { x: tVel.x, y: tVel.y, z: tVel.z };
                             const tAccelX = tVel.x - target.oldVelocity.x;
                             const tAccelZ = tVel.z - target.oldVelocity.z;
                             target.oldVelocity = { x: tVel.x, y: tVel.y, z: tVel.z };
-                            
+
                             // 反復予測 (Iterative Intercept) による精緻な未来位置の特定
                             let futureX = tPos.x;
                             let futureZ = tPos.z;
                             let tti = 0;
-                            const dist = Math.sqrt((tPos.x - ePos.x)**2 + (tPos.z - ePos.z)**2) || 1; // 現在の距離
-                            
+                            const dist = Math.sqrt((tPos.x - ePos.x) ** 2 + (tPos.z - ePos.z) ** 2) || 1; // 現在の距離
+
                             // 最大3回の反復で着弾予測位置を絞り込む
                             for (let iter = 0; iter < 3; iter++) {
                                 const dx = futureX - ePos.x;
                                 const dz = futureZ - ePos.z;
-                                const dIter = Math.sqrt(dx*dx + dz*dz) || 1;
-                                
+                                const dIter = Math.sqrt(dx * dx + dz * dz) || 1;
+
                                 const relVx = tVel.x - myVel.x;
                                 const relVz = tVel.z - myVel.z;
                                 const closureRate = -(dx * relVx + dz * relVz) / dIter;
-                                
+
                                 const vClose = Math.max(closureRate, params.maxSpeed * 0.5, 20);
                                 tti = dIter / vClose;
-                                
+
                                 // ★修正: 加速度を考慮 (等加速度運動 x = v*t + 0.5*a*t^2)
                                 futureX = tPos.x + (tVel.x * tti) + (0.5 * tAccelX * tti * tti);
                                 futureZ = tPos.z + (tVel.z * tti) + (0.5 * tAccelZ * tti * tti);
-                                
+
                                 // 加速度やカーブを考慮（Lv9限定）
                                 if (accuracy > 0 && lvNum >= 9) {
-                                    futureX += tVel.x * tti * (accuracy * 0.5); 
+                                    futureX += tVel.x * tti * (accuracy * 0.5);
                                     futureZ += tVel.z * tti * (accuracy * 0.5);
                                 }
                             }
-                            
+
                             // TTIが長すぎる（＝追いつけない）場合は、敵と中央の間に先回りして待ち構える (Gatekeeping)
                             if (tti > 60 && lvNum >= 7) {
                                 futureX = (tPos.x + 0) / 2; // 中央(0)と敵の中間
                                 futureZ = (tPos.z + 0) / 2;
                             }
 
-                            if (accuracy < 0) { 
-                                const finalDist = Math.sqrt((futureX-ePos.x)**2 + (futureZ-ePos.z)**2);
-                                const noise = finalDist * Math.abs(accuracy); 
-                                futureX += (Math.random() - 0.5) * noise; 
-                                futureZ += (Math.random() - 0.5) * noise; 
+                            if (accuracy < 0) {
+                                const finalDist = Math.sqrt((futureX - ePos.x) ** 2 + (futureZ - ePos.z) ** 2);
+                                const noise = finalDist * Math.abs(accuracy);
+                                futureX += (Math.random() - 0.5) * noise;
+                                futureZ += (Math.random() - 0.5) * noise;
                             }
-                            
+
                             // 慣性キャンセリング (Velocity Compensation)
                             // 向かいたい未来地点への純粋な方向ベクトル
                             const toFutureX = futureX - ePos.x;
                             const toFutureZ = futureZ - ePos.z;
-                            const distToFuture = Math.sqrt(toFutureX*toFutureX + toFutureZ*toFutureZ) || 1;
-                            
+                            const distToFuture = Math.sqrt(toFutureX * toFutureX + toFutureZ * toFutureZ) || 1;
+
                             // 自分が目指すべき「理想の速度」
                             const desiredVx = (toFutureX / distToFuture) * params.maxSpeed;
                             const desiredVz = (toFutureZ / distToFuture) * params.maxSpeed;
-                            
+
                             // 必要な入力（加速度） ＝ 理想の速度 － 現在の速度
                             // これにより、左に滑っている時には「前＋右」のようにカウンターあてを自動で行う
                             targetX = desiredVx - myVel.x;
@@ -4634,22 +4678,22 @@
                     const g = params.gravity || 372;
                     const vy = myVel.y;
                     const h = ePos.y;
-                    
+
                     // 着地時間 (Time to land) を物理計算で算出: h + vy*t - 0.5*g*t^2 = 0
                     const D = vy * vy + 2 * g * h;
                     const tLand = (D >= 0) ? (vy + Math.sqrt(D)) / g : 0.5; // D < 0 は通常あり得ないが安全のため
-                    
+
                     // 現在の速度での予想着地点
                     const projectLx = ePos.x + myVel.x * tLand;
                     const projectLz = ePos.z + myVel.z * tLand;
-                    
+
                     // ステージ内の安全な着地ポイントを探す (クアドラント・スキャン)
                     const limitR = (params.size / 2) * 0.75; // 余裕を持って内側を狙う
                     const quadrants = [
-                        { x: limitR/2, z: limitR/2, count: 0 },   // Q1: ++
-                        { x: -limitR/2, z: limitR/2, count: 0 },  // Q2: -+
-                        { x: -limitR/2, z: -limitR/2, count: 0 }, // Q3: --
-                        { x: limitR/2, z: -limitR/2, count: 0 }   // Q4: +-
+                        { x: limitR / 2, z: limitR / 2, count: 0 },   // Q1: ++
+                        { x: -limitR / 2, z: limitR / 2, count: 0 },  // Q2: -+
+                        { x: -limitR / 2, z: -limitR / 2, count: 0 }, // Q3: --
+                        { x: limitR / 2, z: -limitR / 2, count: 0 }   // Q4: +-
                     ];
 
                     // 地面の敵の分布をスキャン
@@ -4671,12 +4715,12 @@
                     const errX = bestQ.x - projectLx;
                     const errZ = bestQ.z - projectLz;
                     const errDistSq = errX * errX + errZ * errZ;
-                    
+
                     // 予測着地点がすでにステージ外であるか
                     const distProjSq = projectLx * projectLx + projectLz * projectLz;
                     const isOutside = distProjSq > (params.size / 2) ** 2;
 
-                    if (!isOutside && errDistSq < 10000) { 
+                    if (!isOutside && errDistSq < 10000) {
                         // すでに安全な場所（目標半径100以内）に着地できそうなら、
                         // 勢い余って通り過ぎないように、現在の速度と逆方向にスティックを入れる（ブレーキ）
                         targetX = -myVel.x;
@@ -4699,7 +4743,7 @@
                 }
 
                 // 入力ベクトルの正規化（厳密なアナロク入力 0.0〜1.0 の再現）
-                const len = Math.sqrt(targetX*targetX + targetZ*targetZ);
+                const len = Math.sqrt(targetX * targetX + targetZ * targetZ);
                 if (len > 0.01) {
                     entity.lastTX = targetX / len;
                     entity.lastTZ = targetZ / len;
@@ -4804,20 +4848,20 @@
                 if (dot > 0) {
                     // 内積の値（外向きの勢い）に比例して減点。さらに崖に近いほど指数的に増やす
                     const urgency = (distFromCenter - limit * 0.75) / (limit * 0.25);
-                    currentReward -= 1.0 + (dot * 0.5 * Math.pow(urgency, 2)); 
+                    currentReward -= 1.0 + (dot * 0.5 * Math.pow(urgency, 2));
                 }
             }
             // ★追加：崖に背を向けて敵を挟んでいる(Sandwiching) ポジショニング報酬
             if (target) {
                 const tPos = target.getPosition();
                 const enemyToCenterVecX = -tPos.x, enemyToCenterVecZ = -tPos.z;
-                const enemyToCenterDist = Math.sqrt(enemyToCenterVecX**2 + enemyToCenterVecZ**2) || 1;
+                const enemyToCenterDist = Math.sqrt(enemyToCenterVecX ** 2 + enemyToCenterVecZ ** 2) || 1;
                 const meToEnemyX = tPos.x - ePos.x, meToEnemyZ = tPos.z - ePos.z;
-                const meToEnemyDist = Math.sqrt(meToEnemyX**2 + meToEnemyZ**2) || 1;
+                const meToEnemyDist = Math.sqrt(meToEnemyX ** 2 + meToEnemyZ ** 2) || 1;
                 // AI -> 敵 のベクトルと、敵 -> 中心 のベクトルが一致 = AIが敵を外に押し出そうとしている
-                const positioningDot = (meToEnemyX/meToEnemyDist) * (enemyToCenterVecX/enemyToCenterDist) + (meToEnemyZ/meToEnemyDist) * (enemyToCenterVecZ/enemyToCenterDist);
+                const positioningDot = (meToEnemyX / meToEnemyDist) * (enemyToCenterVecX / enemyToCenterDist) + (meToEnemyZ / meToEnemyDist) * (enemyToCenterVecZ / enemyToCenterDist);
                 if (positioningDot < -0.5) { // 自分が外側にいて、敵を中央から遠ざける向きに立っている
-                    currentReward += 0.2; 
+                    currentReward += 0.2;
                 }
             }
 
@@ -5179,7 +5223,7 @@
                         // Speed cap: softcap (directional block) if enabled, otherwise hardcap
                         const bvx = ballBody.linearVelocity.x, bvz = ballBody.linearVelocity.z;
                         const spd2 = bvx * bvx + bvz * bvz;
-                        
+
                         if (spd2 > params.maxSpeed * params.maxSpeed) {
                             if (origSoftcapEnabled) {
                                 // Softcap: only block accel in direction of current velocity
@@ -5187,9 +5231,9 @@
                                 if (dot > 0) { const vLen = Math.sqrt(spd2); const vNx = bvx / vLen, vNz = bvz / vLen; currentAccel.x -= vNx * dot / spd2 * vLen; currentAccel.z -= vNz * dot / spd2 * vLen; }
                             }
                         }
-                        
+
                         // First apply the acceleration
-                        ballBody.linearVelocity.x += currentAccel.x; 
+                        ballBody.linearVelocity.x += currentAccel.x;
                         ballBody.linearVelocity.z += currentAccel.z;
 
                         // Then enforce hardcap if needed without destroying the stored acceleration
@@ -5197,8 +5241,8 @@
                             const newBvx = ballBody.linearVelocity.x, newBvz = ballBody.linearVelocity.z;
                             const newSpd2 = newBvx * newBvx + newBvz * newBvz;
                             if (newSpd2 > params.maxSpeed * params.maxSpeed) {
-                                _tempHV.set(newBvx, newBvz); _tempHV.setLength(params.maxSpeed); 
-                                ballBody.linearVelocity.x = _tempHV.x; 
+                                _tempHV.set(newBvx, newBvz); _tempHV.setLength(params.maxSpeed);
+                                ballBody.linearVelocity.x = _tempHV.x;
                                 ballBody.linearVelocity.z = _tempHV.y;
                             }
                         }
@@ -5216,23 +5260,23 @@
                                 // Speed cap for remote players
                                 const rbvx = rb.linearVelocity.x, rbvz = rb.linearVelocity.z;
                                 const rspd2 = rbvx * rbvx + rbvz * rbvz;
-                                
+
                                 if (rspd2 > params.maxSpeed * params.maxSpeed) {
                                     if (origSoftcapEnabled) {
                                         const rdot = re.accel.x * rbvx + re.accel.z * rbvz;
                                         if (rdot > 0) { const rLen = Math.sqrt(rspd2); const rNx = rbvx / rLen, rNz = rbvz / rLen; re.accel.x -= rNx * rdot / rspd2 * rLen; re.accel.z -= rNz * rdot / rspd2 * rLen; }
                                     }
                                 }
-                                
-                                rb.linearVelocity.x += re.accel.x; 
+
+                                rb.linearVelocity.x += re.accel.x;
                                 rb.linearVelocity.z += re.accel.z;
 
                                 if (!origSoftcapEnabled) {
                                     const nBvx = rb.linearVelocity.x, nBvz = rb.linearVelocity.z;
                                     const nSpd2 = nBvx * nBvx + nBvz * nBvz;
                                     if (nSpd2 > params.maxSpeed * params.maxSpeed) {
-                                        _tempHV.set(nBvx, nBvz); _tempHV.setLength(params.maxSpeed); 
-                                        rb.linearVelocity.x = _tempHV.x; 
+                                        _tempHV.set(nBvx, nBvz); _tempHV.setLength(params.maxSpeed);
+                                        rb.linearVelocity.x = _tempHV.x;
                                         rb.linearVelocity.z = _tempHV.y;
                                     }
                                 }
@@ -5249,7 +5293,7 @@
                         const b = _allBodies[i];
                         if (!b.isAlive) continue;
                         if (b.linearVelocity.y > 0.1) b.linearVelocity.y += 0.5;
-                        
+
                         // ★追加: 物理演算時の「高回転によるフライホイール効果（滑り引きずり）」を防ぐ
                         // 角速度を毎フレーム減衰させることで、入力を行っていない時は安定して減速できるようになり、
                         // 旋回やブレーキなどの入力が「最高速度に張り付かず」に瞬時に効くようになる
@@ -5383,7 +5427,24 @@
                     updateCameraPos();
                 }
 
-                for (let i = effects.length - 1; i >= 0; i--) { const ef = effects[i]; ef.life -= 0.05; ef.mesh.scale.addScalar(ef.speed); ef.mesh.material.opacity = ef.life; if (ef.life <= 0) { scene.remove(ef.mesh); ef.mesh.material.dispose(); effects.splice(i, 1); } }
+                for (let i = effects.length - 1; i >= 0; i--) {
+                    const ef = effects[i];
+                    // 個別の減衰量を使用
+                    ef.life -= (ef.decayRate || 0.0111);
+                    if (ef.type === 'ring') {
+                        ef.mesh.scale.addScalar(ef.speed);
+                        ef.speed *= 0.92; // 指数的減衰を再適用
+                    } else if (ef.type === 'spark') {
+                        ef.mesh.position.add(ef.velocity);
+                        ef.velocity.multiplyScalar(0.99); // 空気抵抗
+                    }
+                    if (ef.mesh.material) ef.mesh.material.opacity = ef.life;
+                    if (ef.life <= 0) {
+                        scene.remove(ef.mesh);
+                        if (ef.mesh.material) ef.mesh.material.dispose();
+                        effects.splice(i, 1);
+                    }
+                }
 
                 if (!isClientMode) {
                     if (ballBody.getPosition().y < -400.0 && ballBody.getPosition().y > -1000.0) handleFall(ballBody);
